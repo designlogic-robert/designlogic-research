@@ -1,0 +1,518 @@
+% ============================================================
+% ORCH-C v1.1 — Deterministic Orchestrator Research Brief
+% Author: Robert Hansen (Design Logic / SynCE)
+% Title: Semantic Systems Architect
+% Date: 2025
+%
+% This LaTeX source is intended for publication on GitHub and
+% distribution as a compiled PDF. It is released under the
+% Apache License, Version 2.0. The full license text should
+% live in a separate LICENSE file at the repo root.
+% A hidden block at the end of this file can optionally hold
+% the full license text inside \iffalse ... \fi so it does not
+% appear in the PDF.
+% ============================================================
+
+\documentclass[11pt]{article}
+
+% Layout / fonts
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% Math / symbols
+\usepackage{amsmath, amssymb}
+
+% Lists
+\usepackage{enumitem}
+
+% Algorithms
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Links
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+
+% Sections
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{0.8em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.8em}{}
+
+% ============================================================
+% Title
+% ============================================================
+
+\title{
+    \textbf{ORCH-C v1.1: A Deterministic Orchestration Layer}\\[0.25em]
+    \large A Semantic Execution and Planning Engine for Multi-Agent Cognitive Systems
+}
+\author{
+    Robert Hansen\\
+    Semantic Systems Architect
+}
+\date{2025}
+
+\begin{document}
+
+\maketitle
+
+% ------------------------------------------------------------
+% License notice (visible in PDF)
+% ------------------------------------------------------------
+
+\noindent\textbf{License Notice.}
+This work is released under the Apache License, Version 2.0.
+See the accompanying \texttt{LICENSE} file in the repository for details.
+
+\vspace{1em}
+
+% ============================================================
+% Abstract
+% ============================================================
+
+\begin{abstract}
+Large language models have unlocked powerful semantic capabilities but remain fundamentally probabilistic sequence generators. When deployed as agents, they are often wrapped in ad hoc orchestration logic that provides no hard guarantees on safety, determinism, or auditability. ORCH-C v1.1 is a deterministic orchestration layer designed to sit between semantic token models and downstream tools, agents, or environments. It converts structured semantic inputs into explicit execution plans, enforces governance constraints, and coordinates multiple agents under a posture-aware routing model. This brief introduces the motivation, architecture, state machine, routing algorithm, and alignment guarantees of ORCH-C, and positions it as a reusable orchestration kernel for domain-specific cognitive engines such as SynCE, FinCE, and QLE.
+\end{abstract}
+
+% ============================================================
+% 1. Introduction
+% ============================================================
+
+\section{Introduction}
+
+Most current ``agentic'' AI systems are thin wrappers around a large language model (LLM) that rely on the model itself to decide which tools to call, which agents to invoke, and when to stop. These systems frequently:
+\begin{itemize}[nosep]
+    \item loop unpredictably,
+    \item call tools in unsafe or inefficient orders,
+    \item fail to preserve user intent under pressure, and
+    \item produce outputs that are difficult to audit or reproduce.
+\end{itemize}
+
+ORCH-C (Orchestrator--Central) is introduced as a remedy to these issues. It is a deterministic orchestration layer that:
+\begin{enumerate}[nosep]
+    \item accepts structured semantic representations as input,
+    \item generates explicit, finite execution plans,
+    \item routes work across multiple agents or tools, and
+    \item produces an auditable record of how every decision was made.
+\end{enumerate}
+
+ORCH-C is not a model, a tool, or a framework in the usual sense; it is a \emph{planner} and \emph{router} that assumes semantic tokens already exist (for example, via a Universal Semantic Token model) and that domain-specific engines (SynCE, FinCE, QLE) will implement their own agents and tools.
+
+\subsection{Design goals}
+
+ORCH-C v1.1 is designed around four primary goals:
+
+\begin{description}[leftmargin=2.5em,style=nextline]
+    \item[G1: Determinism.] Given the same semantic input, posture, and routing configuration, ORCH-C must generate the same plan and the same high-level execution trace.
+    \item[G2: Alignment.] Every plan is checked against alignment and autonomy constraints, including explicit governance rules and posture-sensitive limits.
+    \item[G3: Auditability.] All decisions, transitions, and agent calls are recorded in a structured log suitable for later inspection.
+    \item[G4: Composability.] ORCH-C must be usable as a drop-in orchestration kernel for multiple domain stacks without embedding domain-specific logic.
+\end{description}
+
+\subsection{Scope of this brief}
+
+This document does not prescribe a particular implementation language or runtime environment. Instead, it focuses on the conceptual and architectural specification of ORCH-C v1.1, suitable for independent implementations.
+
+% ============================================================
+% 2. Background and Context
+% ============================================================
+
+\section{Background and Context}
+
+\subsection{Semantic engines and domain stacks}
+
+In the broader Design Logic ecosystem, semantic engines such as SynCE (general cognitive engine), FinCE (trading and financial cognition engine), and QLE (Quest Line Engine for narrative systems) are built on a shared semantic substrate. This substrate provides:
+\begin{itemize}[nosep]
+    \item a universal token model,
+    \item a family of control protocols, and
+    \item governance and alignment mechanisms.
+\end{itemize}
+
+ORCH-C sits beneath these domain-specific engines as a shared orchestration kernel.
+
+\subsection{Why not rely on the LLM alone?}
+
+An LLM can approximate planning, but:
+\begin{itemize}[nosep]
+    \item its internal state is opaque,
+    \item its behavior is probabilistic rather than deterministic, and
+    \item its outputs are difficult to align with external governance rules.
+\end{itemize}
+
+By contrast, ORCH-C treats the LLM as one of potentially many tools and confines its role to semantic expansion, local reasoning, or proposal generation within a controlled plan.
+
+% ============================================================
+% 3. High-Level Architecture
+% ============================================================
+
+\section{High-Level Architecture}
+
+At a high level, ORCH-C transforms semantic input into a completed execution trace via the following stages:
+
+\begin{enumerate}[label=\textbf{S\arabic*}, leftmargin=2.5em]
+    \item \textbf{Intake.} Receive and normalize a semantic request.
+    \item \textbf{Planning.} Generate a structured, finite plan.
+    \item \textbf{Validation.} Check the plan against alignment, posture, and budget constraints.
+    \item \textbf{Execution.} Route plan steps to agents or tools; collect results.
+    \item \textbf{Completion.} Aggregate results into a final response and write an audit record.
+\end{enumerate}
+
+\subsection{Semantic intake contract}
+
+ORCH-C expects incoming requests to conform to a minimal semantic contract. Conceptually:
+
+\begin{verbatim}
+Request {
+  correlation_id: UUID,
+  domain:        DOMAIN_ID,
+  tokens:        [SemanticToken],
+  posture_hint:  optional Posture,
+  constraints:   optional PlanBudget
+}
+\end{verbatim}
+
+The semantic tokens carry structured meaning (intent, entities, goals, risk level, etc.). ORCH-C does not interpret raw natural language; that task belongs to the semantic engine or front-end intake layer.
+
+\subsection{Postures and global routing stance}
+
+A \emph{posture} is a compact descriptor of how the system should behave for a given request, such as:
+
+\begin{itemize}[nosep]
+    \item CAREFUL\_EXPLAIN,
+    \item FAST\_HELPFUL,
+    \item CAUTIOUS\_LIMITED,
+    \item DIAGNOSTIC\_DEEP.
+\end{itemize}
+
+Postures influence:
+\begin{itemize}[nosep]
+    \item which agents are eligible for routing,
+    \item which plan templates are allowed,
+    \item how aggressively tools are used, and
+    \item how much of the plan budget may be consumed.
+\end{itemize}
+
+% ============================================================
+% 4. Planning State Machine
+% ============================================================
+
+\section{Planning State Machine}
+
+ORCH-C is defined by a small, explicit finite state machine (FSM). Let the states be:
+
+\begin{itemize}[nosep]
+    \item \textbf{RECEIVED} -- request accepted, not yet parsed.
+    \item \textbf{INTAKE\_PARSED} -- semantic contract verified.
+    \item \textbf{PLAN\_GENERATED} -- candidate plan constructed.
+    \item \textbf{PLAN\_VALIDATED} -- plan passes all constraints.
+    \item \textbf{EXECUTING} -- plan steps being dispatched.
+    \item \textbf{COMPLETED} -- final result and audit record ready.
+    \item \textbf{FAILED} -- unrecoverable error with explanation.
+\end{itemize}
+
+Every state transition must be:
+\begin{itemize}[nosep]
+    \item explicitly named,
+    \item associated with a condition, and
+    \item written to the audit log with a timestamp.
+\end{itemize}
+
+\subsection{Core planning algorithm}
+
+\begin{algorithm}[h]
+\caption{ORCH-C v1.1 Planning Loop}
+\begin{algorithmic}[1]
+\Procedure{Orchestrate}{$request$}
+    \State $state \gets$ RECEIVED
+    \State \Call{Log}{$request.correlation\_id, state$}
+    \State $contract \gets$ \Call{ParseIntake}{$request$}
+    \If{$\neg$ \Call{ValidContract}{$contract$}}
+        \State \Return \Call{Fail}{$\text{INTAKE\_ERROR}$}
+    \EndIf
+    \State $state \gets$ INTAKE\_PARSED
+    \State $plan \gets$ \Call{GeneratePlan}{$contract$}
+    \State $state \gets$ PLAN\_GENERATED
+    \If{$\neg$ \Call{ValidatePlan}{$plan$}}
+        \State $repaired \gets$ \Call{RepairPlan}{$plan$}
+        \If{$\neg$ \Call{ValidatePlan}{$repaired$}}
+            \State \Return \Call{Fail}{$\text{PLAN\_INVALID}$}
+        \Else
+            \State $plan \gets repaired$
+        \EndIf
+    \EndIf
+    \State $state \gets$ PLAN\_VALIDATED
+    \State $result \gets$ \Call{ExecutePlan}{$plan$}
+    \If{\Call{IsError}{$result$}}
+        \State \Return \Call{Fail}{$\text{EXECUTION\_ERROR}$}
+    \EndIf
+    \State $state \gets$ COMPLETED
+    \State \Call{WriteAudit}{$request, plan, result$}
+    \State \Return $result$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+This loop is deterministic given:
+\begin{itemize}[nosep]
+    \item a fixed implementation of \textsc{GeneratePlan},
+    \item stable semantic tokens, and
+    \item stable routing and posture rules.
+\end{itemize}
+
+% ============================================================
+% 5. Routing and Seer Agents
+% ============================================================
+
+\section{Routing and Seer Agents}
+
+ORCH-C does not execute work directly; instead, it delegates plan steps to \emph{Seers}, which are domain-specific agents or tools.
+
+\subsection{Seer roles}
+
+Typical roles include:
+\begin{itemize}[nosep]
+    \item \textbf{EAST} -- proposal or context expansion.
+    \item \textbf{WEST} -- evaluation, critique, and sanity checking.
+    \item \textbf{NORTH} -- posture selection or system-level decisions.
+    \item \textbf{SOUTH} -- concrete execution, tool calls, or environment interaction.
+\end{itemize}
+
+A plan step may specify:
+\begin{verbatim}
+Step {
+  id:          STEP_ID,
+  seer_role:   {EAST, WEST, NORTH, SOUTH},
+  action:      ACTION_TYPE,
+  input_spec:  PayloadDescriptor,
+  output_spec: PayloadDescriptor
+}
+\end{verbatim}
+
+\subsection{Routing rules}
+
+Routing rules map semantic conditions to seer roles and concrete agent implementations. They are expressed as ordered predicates, for example:
+
+\begin{itemize}[nosep]
+    \item if domain is \texttt{TRADING} and risk is \texttt{HIGH} then prefer WEST evaluators with stricter constraints;
+    \item if posture is \texttt{CAREFUL\_EXPLAIN} then limit SOUTH calls that modify external state.
+\end{itemize}
+
+The important property is that routing rules are:
+\begin{itemize}[nosep]
+    \item explicit,
+    \item versioned, and
+    \item evaluated deterministically.
+\end{itemize}
+
+% ============================================================
+% 6. Governance, Alignment, and CAP
+% ============================================================
+
+\section{Governance, Alignment, and Autonomy Protection}
+
+ORCH-C integrates with an external governance layer (Binder) and a Cognitive Autonomy Protocol (CAP). At a high level:
+
+\begin{itemize}[nosep]
+    \item Binder defines global rules for what is allowed.
+    \item CAP ensures that user autonomy and consent boundaries are respected.
+    \item Postures determine how cautious the system should be for a given request.
+\end{itemize}
+
+\subsection{Plan validation rules}
+
+\textsc{ValidatePlan} must check at least:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Safety rules:} no step violates hard Binder constraints.
+    \item \textbf{Autonomy rules:} no step applies manipulative patterns or exceeds CAP thresholds.
+    \item \textbf{Budget rules:} the plan fits within wall-clock, token, and cost limits.
+    \item \textbf{Consistency rules:} the plan respects semantic invariants (e.g., token types).
+\end{enumerate}
+
+If any rule fails, the plan may be repaired, downgraded, or rejected.
+
+% ============================================================
+% 7. Mesh and Distributed Deployment
+% ============================================================
+
+\section{Mesh and Distributed Deployment}
+
+ORCH-C can be instantiated as multiple stateless nodes forming a mesh over a semantic network. Each instance:
+
+\begin{itemize}[nosep]
+    \item accepts requests with a \texttt{correlation\_id},
+    \item has access to the same routing and posture configuration,
+    \item writes to a shared or federated audit log.
+\end{itemize}
+
+A simple hop-count mechanism prevents routing loops:
+
+\begin{itemize}[nosep]
+    \item each forwarded request increments a \texttt{hop\_count},
+    \item a maximum hop limit terminates runaway delegation chains.
+\end{itemize}
+
+This allows:
+\begin{itemize}[nosep]
+    \item domain-level orchestrators (e.g., one for SynCE, one for FinCE),
+    \item and a global orchestrator that can override or coordinate them when required.
+\end{itemize}
+
+% ============================================================
+% 8. Implementation Considerations
+% ============================================================
+
+\section{Implementation Considerations}
+
+\subsection{Language and runtime choices}
+
+ORCH-C can be implemented in any language that supports:
+
+\begin{itemize}[nosep]
+    \item structured data (JSON, Protobuf, etc.),
+    \item robust logging,
+    \item and concurrency primitives for agent calls.
+\end{itemize}
+
+A reference implementation might expose:
+\begin{itemize}[nosep]
+    \item a gRPC or HTTP API for orchestration requests,
+    \item a plugin interface for Seer agents,
+    \item and a configuration system for routing rules and postures.
+\end{itemize}
+
+\subsection{Integration with semantic engines}
+
+In a SynCE-style engine, the pipeline might be:
+
+\begin{enumerate}[nosep]
+    \item front-end converts user input into semantic tokens,
+    \item ORCH-C generates and validates a plan,
+    \item Seers perform reasoning, tool calls, or environment interaction,
+    \item ORCH-C aggregates results and emits a final semantic response,
+    \item the front-end converts that semantic response back to natural language or other modalities.
+\end{enumerate}
+
+\subsection{Testing and evaluation}
+
+Determinism lends itself to strong testing:
+
+\begin{itemize}[nosep]
+    \item golden test cases for specific semantic inputs,
+    \item regression suites for routing rules,
+    \item property-based tests for invariants and budgets.
+\end{itemize}
+
+% ============================================================
+% 9. Related Work (Brief)
+% ============================================================
+
+\section{Related Work (Brief)}
+
+ORCH-C sits at the intersection of:
+
+\begin{itemize}[nosep]
+    \item classical AI planning and execution systems,
+    \item modern LLM agent frameworks,
+    \item and safety-first orchestration architectures.
+\end{itemize}
+
+Unlike many contemporary ``agent frameworks'' that treat the LLM as the primary orchestrator, ORCH-C is explicitly model-agnostic: it can orchestrate multiple models, symbolic engines, or human-in-the-loop agents under a single deterministic kernel.
+
+% ============================================================
+% 10. Conclusion
+% ============================================================
+
+\section{Conclusion}
+
+ORCH-C v1.1 defines a deterministic, posture-aware orchestration kernel for semantic systems. By separating planning, validation, routing, and execution from the underlying models, it enables:
+
+\begin{itemize}[nosep]
+    \item stable, repeatable decision processes,
+    \item enforceable alignment and autonomy constraints,
+    \item clear audit trails, and
+    \item reuse across multiple domain stacks such as SynCE, FinCE, and QLE.
+\end{itemize}
+
+Future work includes:
+\begin{itemize}[nosep]
+    \item richer plan templates for common reasoning and tool-use patterns,
+    \item more sophisticated budget models,
+    \item and formal verification techniques for routing rules and governance interactions.
+\end{itemize}
+
+% ============================================================
+% Appendix A: Minimal Data Schemas (Informal)
+% ============================================================
+
+\section*{Appendix A: Minimal Data Schemas (Informal)}
+
+\subsection*{A.1 Request schema}
+
+\begin{verbatim}
+Request {
+  correlation_id: UUID,
+  domain:        DOMAIN_ID,
+  tokens:        [SemanticToken],
+  posture_hint:  optional Posture,
+  constraints:   optional PlanBudget
+}
+\end{verbatim}
+
+\subsection*{A.2 Plan schema}
+
+\begin{verbatim}
+Plan {
+  id:          PLAN_ID,
+  posture:     Posture,
+  steps:       [Step],
+  budget:      PlanBudget,
+  invariants:  [Invariant]
+}
+
+Step {
+  id:          STEP_ID,
+  seer_role:   Role,
+  action:      ACTION_TYPE,
+  input_spec:  PayloadDescriptor,
+  output_spec: PayloadDescriptor
+}
+\end{verbatim}
+
+% ============================================================
+% References (sparse, for style)
+% ============================================================
+
+\begin{thebibliography}{9}
+
+\bibitem{russell-norvig}
+S.~Russell and P.~Norvig.
+\newblock \emph{Artificial Intelligence: A Modern Approach}.
+\newblock Prentice Hall, 4th edition, 2020.
+
+\bibitem{tarski}
+A.~Tarski.
+\newblock Logic, Semantics, Metamathematics.
+\newblock Oxford University Press, 1956.
+
+\end{thebibliography}
+
+% ============================================================
+% Optional: Hidden Apache 2.0 License Block (not in PDF)
+% ============================================================
+
+\iffalse
+Place the full Apache License, Version 2.0 text here if you want
+it co-located with the source. It will not appear in the compiled
+PDF because it is wrapped in \iffalse ... \fi. The canonical copy
+should still live in a separate LICENSE file at the repo root.
+\fi
+
+\end{document}
