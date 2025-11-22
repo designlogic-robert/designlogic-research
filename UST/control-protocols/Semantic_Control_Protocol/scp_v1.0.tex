@@ -1,0 +1,176 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[numbers,sort&compress]{natbib}
+
+% Font + spacing fixes
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsfonts}
+\usepackage{microtype}
+
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=blue
+}
+
+\title{Semantic Control Protocol (SCP):\\
+A Typed Orchestration Layer for Deterministic Language Systems}
+
+\author{Robert Hansen\\Design Logic}
+\date{November 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Modern large language models (LLMs) are powerful generators of text, but they lack a stable, machine-auditable notion of intent, state, and responsibility. Raw prompts act as untyped message strings, leaving orchestration, safety, and multi-step planning to ad~hoc conventions. The \emph{Semantic Control Protocol} (SCP) introduces a typed, schema-bound control layer that sits above natural language and below execution engines. SCP interprets human and agent intent into structured control directives, routes semantic operations, applies constraints, and orchestrates multi-step flows without modifying model internals. Combined with \emph{Semantic Tokens} (STs)---a meaning-level substrate for content and state---SCP enables deterministic, auditable orchestration over probabilistic language models. This paper defines the core SCP model, its type system, routing semantics, and integration with STs, and outlines how SCP supports reliable multi-agent coordination in systems like LOS / SynCE.
+\end{abstract}
+
+\section{Introduction}
+
+Large language models have made it practical to program with natural language, but they do not provide the same guarantees as typed programming languages or formal protocols. Prompts are opaque strings; control flow is implicit; safety checks and routing rules are scattered across bespoke code paths. As context windows grow and multi-agent architectures proliferate, the absence of a shared, governed control layer becomes a major source of drift, misalignment, and failure.
+
+The Semantic Control Protocol (SCP) is a response to that gap. SCP is a semantic orchestration layer that:
+\begin{itemize}
+  \item interprets human and agent intent into structured control directives;
+  \item routes requests through a governed pipeline of tools, agents, and models;
+  \item applies constraints and posture settings before generation, not after;
+  \item maintains an auditable trace of what was requested, why, and how it was executed.
+\end{itemize}
+
+SCP is not another DSL for prompts; it is a control protocol that treats prompts and model outputs as one kind of payload among others, embedded in a typed envelope. When coupled with Semantic Tokens (STs) as a meaning substrate, SCP provides the control counterpart to STs' representation of content and state.
+
+\section{Background and Lineage}
+
+SCP is intentionally conservative: it reuses ideas from classical communication theory, formal semantics, and AI planning, but applies them to LLM orchestration.
+
+\paragraph{Communication and channels.}
+Shannon's theory of communication models messages transmitted over noisy channels with explicit encoding and decoding layers~\cite{shannon1948}. SCP borrows this separation: natural language is treated as an encoding of intent, while SCP messages form the structured channel through which that intent is carried and acted upon.
+
+\paragraph{Meaning and formal semantics.}
+Work in formal semantics and semiotics---including Peirce's triadic sign model~\cite{peirce1931}, Tarski's definition of truth in formalized languages~\cite{tarski1933}, and Kaplan's treatment of context and demonstratives~\cite{kaplan1989}---demonstrates that meaning depends on both expression and interpretation rule. SCP assumes that STs provide a typed, schema-bound representation of meaning, while SCP defines how those representations are used to drive behavior.
+
+\paragraph{Structure and generative systems.}
+Chomsky's generative tradition~\cite{chomsky1957,chomsky1965} frames language as a structured space of well-formed expressions. SCP does not attempt to replace the internal generative machinery of LLMs, but it mirrors this idea on the control side: only well-typed SCP messages are considered valid control instructions.
+
+\paragraph{Agents and AI systems.}
+Classical AI texts such as Russell and Norvig~\cite{russell2010} describe agents as entities that perceive, reason, and act in an environment according to a performance criterion. SCP treats each agent---human or artificial---as a participant in a governed protocol, with explicit roles, permissions, and postures. It is designed to support multi-agent architectures where coordination cannot be left to informal conventions.
+
+\paragraph{Intent, understanding, and limits.}
+The Chinese Room argument~\cite{searle1980} reminds us that symbol manipulation alone does not guarantee understanding. SCP does not claim to solve philosophical questions of understanding; instead, it offers an auditable link between the representations (STs) and the actions triggered from them, so that human operators can inspect and correct system behavior.
+
+\section{Problem Statement}
+
+Raw prompt-based orchestration exhibits several recurring problems:
+\begin{enumerate}
+  \item \textbf{Unstructured control.} Control decisions (which tool to call, which agent to invoke, what constraints to apply) are embedded implicitly in long prompts or external glue code.
+  \item \textbf{Lack of type safety.} There is no enforced contract on what a model is allowed to return, or on what a controller is allowed to ask for.
+  \item \textbf{Weak auditability.} When a system misbehaves, it is difficult to reconstruct which instructions, modes, and constraints were in effect at each step.
+  \item \textbf{Multi-agent drift.} In agent swarms, conventions about message shape and semantics quickly diverge, leading to subtle incompatibilities and semantic drift.
+  \item \textbf{Runtime safety as an afterthought.} Safety filters often wrap the outside of the system, instead of being integrated into the core control loop.
+\end{enumerate}
+
+SCP addresses these issues by making control explicit, typed, and logged.
+
+\section{Semantic Control Protocol Overview}
+
+At a high level, an SCP message is a typed envelope:
+\begin{center}
+  \texttt{SCP\_Message = \{ header, posture, routing, payload \}}
+\end{center}
+The \emph{payload} may contain natural-language instructions, Semantic Tokens, tool calls, or other data. The header, posture, and routing fields allow ORCH-style orchestrators to reason about the message without inspecting its full textual content.
+
+\subsection{Core Concepts}
+
+\paragraph{Domains and scopes.}
+Each SCP message belongs to a domain (e.g.\ \texttt{LOS.Core}, \texttt{SynCE.Public}, \texttt{Eden.R\&D}) and scope (e.g.\ \texttt{session}, \texttt{workflow}, \texttt{tenant}). Domains control which routing rules and Binder policies apply.
+
+\paragraph{Posture.}
+Posture encodes the behavioral stance of the system---for example \texttt{FAST\_HELPFUL}, \texttt{CAREFUL\_EXPLAIN}, or \texttt{CAUTIOUS\_LIMITED}. Posture influences which tools are eligible, how aggressively to optimize, and which safety margins to enforce. Posture is treated as a first-class field, not a vague style hint.
+
+\paragraph{Constraints and budgets.}
+SCP messages may carry explicit constraints: maximum steps, token budgets, latency targets, or safety levels. This allows deterministic enforcement of resource and risk boundaries, similar in spirit to planning horizons in classical AI~\cite{russell2010}.
+
+\paragraph{Semantic Tokens.}
+Where STs are present, SCP treats them as the canonical representation of meaning. Text is seen as a lossy surface; STs carry the durable semantics used for routing and Binder validation.
+
+\section{Type System}
+
+SCP uses a lightweight type system for messages and payloads:
+\begin{itemize}
+  \item \textbf{Message types} (e.g.\ \texttt{QUERY}, \texttt{PLAN}, \texttt{EXECUTE}, \texttt{EVAL}) describe the role of a message in a workflow.
+  \item \textbf{Payload types} describe what is carried: ST graphs, tool-call specifications, natural-language segments, or structured reports.
+  \item \textbf{Capability types} describe what an agent or tool can handle, enabling routing based on type compatibility.
+\end{itemize}
+
+Types are intentionally simple: they are designed for easy implementation in JSON, Protobuf, or similar serializations. SCP does not require a specific representation; it requires only that the types be machine-checkable and versioned.
+
+\section{Execution Model}
+
+SCP assumes an orchestrator---such as ORCH-C in LOS / SynCE---that consumes SCP messages, plans an execution trace, and emits new SCP messages as results. A typical loop is:
+
+\begin{enumerate}
+  \item \textbf{Ingress.} A human or agent submits an SCP message. The orchestrator validates schema, domain, and posture.
+  \item \textbf{Planning.} The orchestrator selects a plan template based on message type, domain, and posture. Budget and safety constraints are attached.
+  \item \textbf{Tool and agent routing.} Each step of the plan is turned into SCP sub-messages directed to tools or agents whose capability types match.
+  \item \textbf{Binder validation.} Binder-style validators check STs and SCP headers for alignment with global rules (e.g.\ GR--007 Truth Over Comfort).
+  \item \textbf{Aggregation and response.} Results from tools and agents are combined into a final SCP message containing both semantic artifacts (STs) and human-readable text.
+\end{enumerate}
+
+Because every step flows through SCP envelopes, the entire execution trace is auditable: each decision can be inspected after the fact, including which posture, constraints, and validation rules were in effect.
+
+\section{Integration with Semantic Tokens}
+
+SCP and STs are complementary:
+\begin{itemize}
+  \item STs represent \emph{what} the system knows---concepts, entities, relationships, plans, and states---in a governed meaning layer.
+  \item SCP represents \emph{how} the system behaves---control decisions, routing, constraints, and postures.
+\end{itemize}
+
+In a SynCE-style stack, the integration looks like:
+\begin{enumerate}
+  \item Natural-language input is parsed into candidate STs and an SCP \texttt{QUERY} message.
+  \item The orchestrator plans using SCP; STs provide durable references for entities and goals.
+  \item Tools and agents operate over STs where possible, using text only when interaction with humans or external black-box models is needed.
+  \item Final outputs include both ST updates and human-readable explanations.
+\end{enumerate}
+
+This mirrors classical distinctions between representation and control in AI planning~\cite{russell2010}, but instantiated for LLM-based systems.
+
+\section{Evaluation Sketch}
+
+A full empirical evaluation is future work, but SCP suggests several measurable axes:
+\begin{itemize}
+  \item \textbf{Drift under long-horizon workflows:} compare ST+SCP systems against prompt-only baselines on correctness and stability.
+  \item \textbf{Audit time:} measure how quickly an operator can reconstruct ``what happened'' in a complex workflow.
+  \item \textbf{Inter-agent compatibility:} measure how often independently-built agents interoperate successfully when constrained to SCP message types.
+\end{itemize}
+
+The goal is not raw benchmark scores, but \emph{operational reliability}: the ability of a system to behave predictably and to surface its own reasoning in a way that human operators can inspect and govern.
+
+\section{Discussion}
+
+SCP does not attempt to resolve philosophical debates about understanding or consciousness~\cite{searle1980}. Instead, it treats LLM-based systems as powerful pattern manipulators whose behavior must be constrained by explicit, auditable control structures. By placing a typed protocol between human intent and machine action, SCP offers a practical path toward systems that are:
+\begin{itemize}
+  \item safer, because safety rules are integrated into the core control loop;
+  \item more transparent, because every decision flows through a structured envelope;
+  \item more composable, because agents and tools can coordinate via shared types and postures rather than ad~hoc prompts.
+\end{itemize}
+
+\section{Conclusion}
+
+The Semantic Control Protocol is a simple idea: treat control as a first-class, typed, semantic object rather than an emergent property of prompts and glue code. When combined with Semantic Tokens as a meaning substrate, SCP provides a coherent architecture for deterministic orchestration over probabilistic language models. The approach draws on long-standing work in communication theory, semantics, and AI agents~\cite{shannon1948,peirce1931,tarski1933,kaplan1989,chomsky1957,chomsky1965,russell2010}, but is engineered for contemporary LLM ecosystems.
+
+Future work includes formalizing the SCP type system, defining reference implementations for common domains (e.g.\ research assistants, multi-agent coding systems), and measuring the impact of SCP+ST architectures on long-horizon reliability and human trust.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
