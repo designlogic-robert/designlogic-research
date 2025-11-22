@@ -1,0 +1,365 @@
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{courier}
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  columns=fullflexible
+}
+
+\title{Semantic Tokens v1.0:\\A Foundational Meaning Layer for Deterministic AI Systems}
+
+\author{
+Robert Hansen \\
+Design Logic \\
+\texttt{robert.h.designlogic@gmail.com}  
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+{\small
+© 2025 Robert Hansen (Design Logic). \\
+This work is licensed under the Apache License, Version 2.0. \\
+You may reproduce, distribute, and create derivative works under the terms of the License. \\
+No warranties or guarantees are provided.
+}
+\end{center}
+
+\begin{abstract}
+Modern AI systems rely on surface-form text tokens that blend meaning with raw language, producing drift, ambiguity, and instability in long-context reasoning. This often leads to hallucination, misalignment, and unreliable multi-step behavior, especially in distributed or multi-agent settings.
+
+Semantic Tokens (STs) introduce a governed, typed, meaning-level representation that preserves intent, structure, and relational semantics independently of text. This paper defines the Semantic Token standard, formalizes the token schema, introduces an execution model, and outlines how STs enable deterministic reasoning and multi-agent coordination. By stabilizing meaning over time, STs support long-horizon planning, safer alignment, and cross-tool interoperability. Semantic Tokens serve as a substrate for reliable AI orchestration at scale, bridging probabilistic language models with structured, deterministic computation.
+\end{abstract}
+
+\section{Introduction}
+
+Large language models (LLMs) operate on sequences of subword text tokens. These tokens encode surface form (spelling, punctuation, morphology), but not explicit semantic intent. As a result, the model learns statistical associations over string fragments rather than governed units of meaning.
+
+This design is extremely effective for open-ended generation, but it introduces structural weaknesses when systems are used for:
+\begin{itemize}[noitemsep]
+    \item multi-step reasoning and planning,
+    \item multi-agent coordination,
+    \item tool or API orchestration,
+    \item long-horizon interaction with humans or other agents.
+\end{itemize}
+
+In these settings, \emph{meaning} must remain stable across turns, agents, and tools. Text tokens alone do not provide that stability.
+
+We propose \textbf{Semantic Tokens (STs)}: a standard for typed, governed, meaning-level units that can be shared across agents and execution environments. STs do not replace text tokens; they complement them with an explicit semantic substrate.
+
+\section{Problem: Text Tokens Are Not Enough}
+
+LLMs interpret meaning probabilistically: given a context window of text tokens, the model predicts the next token distribution. This implicitly entangles semantics with surface form and leads to several well-known failure modes:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Conceptual drift:} Over long interactions, concepts gradually shift or collapse, especially when compressed or summarized repeatedly.
+    \item \textbf{Unstable chains of thought:} Small perturbations in wording or order can cause qualitatively different reasoning paths.
+    \item \textbf{Agent divergence:} Two agents consuming the same textual summary may develop different internal representations and plans.
+    \item \textbf{Hallucination under ambiguity:} When semantics are under-specified, models fill in gaps without a clear record of assumptions.
+    \item \textbf{Intent misalignment:} Changes in phrasing can mutate the inferred objective, even when the underlying goal has not changed.
+\end{itemize}
+
+In distributed AI systems, these weaknesses compound. When agents pass only text, there is no explicit representation of:
+
+\begin{itemize}[noitemsep]
+    \item what entities and relations are involved,
+    \item which constraints must be respected,
+    \item what intent the message carries (inform, propose, commit, request, etc.),
+    \item which parts of the content are stable commitments vs. speculative hypotheses.
+\end{itemize}
+
+Text-based protocols can approximate this via schemas, ontologies, or conventions, but they remain fragile: the \emph{semantics} is implicit in how humans and models interpret those strings. We argue that distributed AI requires a first-class meaning layer.
+
+\section{Semantic Token Model}
+
+Semantic Tokens provide such a layer. Intuitively, an ST is a \emph{typed, atomic unit of meaning} that can be serialized, stored, and manipulated independently of any particular textual phrasing.
+
+\subsection{Overview}
+
+Conceptually, each message in a system carries two parallel views:
+
+\begin{enumerate}[noitemsep]
+    \item \textbf{Surface view:} free-form natural language, optimized for human readability and LLM fluency.
+    \item \textbf{Semantic view:} a set of Semantic Tokens representing intent, entities, relations, states, and constraints.
+\end{enumerate}
+
+The semantic view is governed by a schema that defines:
+
+\begin{itemize}[noitemsep]
+    \item token types and fields,
+    \item invariants and constraints,
+    \item relationships between tokens,
+    \item execution-time expectations (e.g., which tokens are required for a valid plan step).
+\end{itemize}
+
+\subsection{Typed Meaning Units}
+
+At minimum, the Semantic Token layer distinguishes the following families of tokens:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Intent tokens} (e.g., \texttt{REQUEST\_ACTION}, \texttt{PROPOSE\_PLAN}, \texttt{REPORT\_STATE}).
+    \item \textbf{Entity tokens} (objects, agents, resources, tasks) with stable identifiers.
+    \item \textbf{Relation tokens} capturing links such as ownership, dependency, precedence, or containment.
+    \item \textbf{State tokens} representing conditions, flags, or environment variables.
+    \item \textbf{Constraint tokens} specifying hard or soft requirements (deadlines, budgets, safety rules).
+\end{itemize}
+
+Tokens are \emph{not} tied to strings like ``river'' or ``city''. Instead, they refer to canonical concepts that may be rendered into many surface forms.
+
+\subsection{Schema-Bound Representation}
+
+Each token instance is governed by a schema. At a high level, we can view an ST as:
+
+\begin{equation}
+\text{ST} := (\texttt{type}, \texttt{id}, \texttt{payload}, \texttt{constraints}, \texttt{metadata})
+\end{equation}
+
+where:
+
+\begin{itemize}[noitemsep]
+    \item \texttt{type} is a member of a finite, versioned token ontology,
+    \item \texttt{id} is a stable reference for this semantic object,
+    \item \texttt{payload} contains type-specific fields,
+    \item \texttt{constraints} encode invariants or obligations,
+    \item \texttt{metadata} attaches provenance, timestamps, confidence, and links.
+\end{itemize}
+
+By fixing a schema, we obtain a representation that is:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{machine-checkable} (Binder-style validation),
+    \item \textbf{model-agnostic} (independent of any particular LLM),
+    \item \textbf{serializable} into JSON, protobuf, or other wire formats,
+    \item \textbf{versioned} for long-horizon compatibility.
+\end{itemize}
+
+\section{Semantic Token Schema}
+
+This section sketches a minimal but practical schema suitable for multi-agent coordination. In production, this schema would be extended and versioned.
+
+\subsection{Core Fields}
+
+We define a top-level JSON shape for a token instance:
+
+\begin{lstlisting}
+{
+  "token_id": "ST-000123",
+  "token_type": "INTENT.REQUEST_ACTION",
+  "scope": "AGENT_SESSION",
+  "payload": { ... },
+  "constraints": { ... },
+  "metadata": {
+    "created_at": "2025-11-17T03:10:00Z",
+    "created_by": "agent://planner_1",
+    "confidence": 0.94,
+    "provenance": ["msg://1234"]
+  }
+}
+\end{lstlisting}
+
+The \texttt{payload} structure is determined by \texttt{token\_type}. For example, an intent token might contain:
+
+\begin{lstlisting}
+"payload": {
+  "action": "GENERATE_SPEC",
+  "target_entity": "ENT-API_DESIGN_42",
+  "urgency": "HIGH"
+}
+\end{lstlisting}
+
+\subsection{Minimal Coordination Ontology}
+
+As a starting point, we can define the following token types for agent coordination:
+
+\begin{itemize}[noitemsep]
+    \item \texttt{INTENT.REQUEST\_ACTION}
+    \item \texttt{INTENT.PROPOSE\_PLAN}
+    \item \texttt{INTENT.CONFIRM}
+    \item \texttt{ENTITY.AGENT}
+    \item \texttt{ENTITY.RESOURCE}
+    \item \texttt{RELATION.DEPENDS\_ON}
+    \item \texttt{STATE.ENV\_VARIABLE}
+    \item \texttt{CONSTRAINT.SAFETY\_RULE}
+\end{itemize}
+
+Crucially, these types are globally understood within the system. Agents can extend the ontology locally, but shared behavior depends on the common subset.
+
+\subsection{Constraints and Invariants}
+
+Constraints can be attached both at the schema level and at the instance level. Examples include:
+
+\begin{itemize}[noitemsep]
+    \item field cardinality (e.g., every \texttt{REQUEST\_ACTION} must reference at least one \texttt{ENTITY}),
+    \item type compatibility (e.g., \texttt{RELATION.DEPENDS\_ON} must link valid entities),
+    \item temporal constraints (e.g., deadlines, expiration times),
+    \item safety invariants (e.g., actions forbidden under certain states).
+\end{itemize}
+
+A Binder-like component can validate tokens and reject messages that violate invariants, providing deterministic guardrails around probabilistic models.
+
+\section{Execution Model}
+
+The execution model specifies how STs are produced, consumed, and transformed in a running system. We assume a typical loop:
+
+\begin{enumerate}[noitemsep]
+    \item Human or agent emits natural language.
+    \item A \emph{semantic injector} generates a set of candidate Semantic Tokens from the text.
+    \item Binder validates and normalizes the tokens according to the schema.
+    \item Agents plan and act over the semantic representation.
+    \item Text is generated \emph{from} the updated semantic state when needed for humans or other systems.
+\end{enumerate}
+
+\subsection{Text \texorpdfstring{$\rightarrow$}{→} Semantic Tokens}
+
+Generation of STs from text can be implemented via:
+
+\begin{itemize}[noitemsep]
+    \item prompted LLMs constrained to output valid JSON shapes,
+    \item rule-based extractors for known patterns (IDs, dates, amounts),
+    \item hybrid approaches using both structure and model inference.
+\end{itemize}
+
+The critical requirement is that the output passes schema validation. When ambiguity is high, the system can attach lower confidence scores or explicit hypotheses rather than pretending to know the truth.
+
+\subsection{Semantic Tokens \texorpdfstring{$\rightarrow$}{→} LLM Context}
+
+When LLM calls are needed, semantic state can be re-encoded into structured prompts, e.g.:
+
+\begin{lstlisting}
+System: You are operating on the following semantic state:
+- Intent: REQUEST_ACTION (GENERATE_SPEC) on ENTITY API_DESIGN_42
+- Constraints: SAFETY_RULE SR-7, deadline T+24h
+- Relations: API_DESIGN_42 DEPENDS_ON SCHEMA_10
+
+User: Produce the next concrete step that respects all constraints.
+\end{lstlisting}
+
+By grounding prompts in explicit STs, we reduce drift and keep meaning stable even as natural language descriptions vary.
+
+\subsection{Deterministic Behavior Over Time}
+
+Determinism here is not about bitwise identical outputs, but about \emph{stable semantics}:
+
+\begin{itemize}[noitemsep]
+    \item Given the same semantic state and policies, the system produces equivalent decisions.
+    \item Small perturbations in text do not silently mutate the underlying meaning.
+    \item Agent coordination protocols can reason over explicit intent and constraints, not inferred guesswork.
+\end{itemize}
+
+Semantic Tokens make this possible by separating persistent meaning from transient phrasing.
+
+\section{Applications}
+
+\subsection{Multi-Agent Coordination}
+
+In a multi-agent system, each message can carry both text and a bundle of Semantic Tokens. Agents can:
+
+\begin{itemize}[noitemsep]
+    \item negotiate over explicit intent tokens (\emph{propose}, \emph{accept}, \emph{reject}),
+    \item maintain shared views of entities and resources via stable IDs,
+    \item detect and resolve conflicts via constraint tokens.
+\end{itemize}
+
+A minimal proof-of-concept can be built with two agents exchanging typed messages, comparing drift between a text-only protocol and an ST-augmented protocol.
+
+\subsection{Tool and API Integration}
+
+Tools can be bound to specific token types. For example:
+
+\begin{itemize}[noitemsep]
+    \item a database tool might be triggered by \texttt{INTENT.QUERY\_DATA} tokens,
+    \item a deployment tool might require \texttt{CONSTRAINT.SAFETY\_RULE} tokens to be satisfied before executing.
+\end{itemize}
+
+Because tokens are model-agnostic, tools can operate on a stable schema even as models are upgraded or swapped.
+
+\subsection{Alignment and Auditability}
+
+STs provide a natural substrate for alignment:
+
+\begin{itemize}[noitemsep]
+    \item Intent is explicit and can be logged.
+    \item Constraints and safety rules are first-class objects, not hidden in prompts.
+    \item Decisions can be traced back to the semantic state that produced them.
+\end{itemize}
+
+This enables audit trails and post-hoc analysis of failures without reverse-engineering raw text transcripts.
+
+\section{Evaluation Plan}
+
+A full empirical evaluation is beyond the scope of this introductory paper, but we outline an initial plan.
+
+\subsection{Drift Measurement Experiment}
+
+\begin{enumerate}[noitemsep]
+    \item Define a minimal Semantic Token schema for agent coordination.
+    \item Implement two agents:
+    \begin{itemize}[noitemsep]
+        \item \textbf{Baseline:} communicates via text-only messages.
+        \item \textbf{ST-augmented:} communicates using both text and ST bundles.
+    \end{itemize}
+    \item Design multi-turn tasks that require stable intent and shared state.
+    \item Measure:
+    \begin{itemize}[noitemsep]
+        \item task completion rate,
+        \item number of clarification turns,
+        \item semantic drift (changes in inferred goals or entities),
+        \item error types (hallucination, miscoordination, constraint violation).
+    \end{itemize}
+    \item Compare performance between the two conditions.
+\end{enumerate}
+
+We hypothesize that ST-augmented agents will exhibit lower drift, fewer misalignments, and more reliable task completion under long-horizon interactions.
+
+\section{Related Work}
+
+Semantic Tokens intersect with several existing research threads:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Formal Semantics and AMR:} Abstract Meaning Representation and related formalisms provide graph-based semantic structures. STs share the graph idea but focus on operational, schema-bound tokens for distributed systems.
+    \item \textbf{Knowledge Graphs and Ontologies:} Knowledge graphs encode entities and relations, but are often static or offline. STs represent online, transient meaning units that can flow through runtime systems.
+    \item \textbf{Program Synthesis and DSLs:} Domain-specific languages can express structured operations, but typically require strict syntax. STs occupy a middle ground: structured like a DSL, but generated and consumed in tandem with natural language.
+    \item \textbf{Agent Communication Languages:} Protocols such as FIPA ACL specify communicative acts (inform, request, etc.). STs can be seen as a modern, LLM-compatible realization of similar ideas with explicit typing, constraints, and integration into model prompts.
+\end{itemize}
+
+\section{Discussion and Future Work}
+
+Semantic Tokens v1.0 is intentionally minimal. Many extensions are possible:
+
+\begin{itemize}[noitemsep]
+    \item richer ontologies for tasks, plans, and world models,
+    \item probabilistic or fuzzy semantics attached to tokens,
+    \item hierarchical tokens (macro-tokens composed of subgraphs),
+    \item integration with blockchain-style ledgers for global knowledge graphs,
+    \item standardized open-source schemas for common coordination patterns.
+\end{itemize}
+
+The central claim is not that any specific token ontology is final, but that \emph{a governed semantic substrate is necessary} for deterministic AI orchestration at scale.
+
+\section{Conclusion}
+
+Text tokens made modern LLMs possible, but they are not sufficient for reliable, deterministic, multi-agent AI systems. By introducing Semantic Tokens as typed, schema-bound meaning units, we separate stable semantics from surface form and enable new capabilities:
+
+\begin{itemize}[noitemsep]
+    \item deterministic meaning preservation across turns and agents,
+    \item cross-agent semantic stability,
+    \item intent locking and constraint-aware planning,
+    \item tool and API integration over a shared semantic substrate,
+    \item alignment, auditability, and governance at the level of intent and state.
+\end{itemize}
+
+Semantic Tokens v1.0 is a starting point: a practical, implementable standard that invites experimentation, extension, and open collaboration. The authors invite feedback from researchers and practitioners working on agent orchestration, distributed AI protocols, and meaning-centered architectures.
+
+\end{document}
