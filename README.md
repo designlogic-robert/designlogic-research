@@ -37,8 +37,6 @@ Each folder contains:
 
 - `paper.tex` (LaTeX source)  
 - `paper.pdf` (compiled PDF)  
-- `abstract.md`  
-- any required diagrams or supporting material  
 
 ---
 
