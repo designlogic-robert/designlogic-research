@@ -30,8 +30,6 @@ All documents in this repo are research-grade and intended for public consumptio
 /orch-c/              ORCH-C deterministic orchestrator (v1.1+)
 /semantic-engine/     Shared semantic substrate papers
 /cognitive-engines/   Papers for SynCE, FinCE, QLE, and future engines
-/diagrams/            Architecture diagrams (TiKZ, SVG, PNG)
-/drafts/              Early-stage notes and preprints (optional)
 /LICENSE              License for all research content (Apache 2.0)
 ```
 
