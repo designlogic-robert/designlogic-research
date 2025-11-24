@@ -1,1 +1,272 @@
+% =====================================================================
+% Teleo Control Protocol (TCP) v1.0
+% Research Brief (2025)
+% Author: Robert Hansen — Semantic Systems Architect
+%
+% Apache License 2.0 (hidden from PDF output)
+%
+% Copyright 2025 Robert Hansen
+%
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+%
+%     http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
+% =====================================================================
+
+\documentclass[11pt]{article}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{
+\textbf{Teleo Control Protocol (TCP) v1.0} \\
+A Runtime Protocol for Teleogenic Interaction \\
+\large Research Brief — 2025
+}
+
+\author{
+Robert Hansen \\
+Semantic Systems Architect \\
+\texttt{github.com/designlogic-robert}
+}
+
+\date{2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The Teleo Control Protocol (TCP) v1.0 formalizes structured, deterministic
+interaction between an agent and a Teleogenic Cognitive Engine.
+TCP governs how meaning-bearing directives are initiated, interpreted,
+validated, and completed through a two-phase Call-Command model.
+Where Semantic Tokens describe units of meaning, Teleo Tokens express
+teleogenic state --- intent, values, alignment, and arc-level direction.
+TCP defines the rules of engagement for how those states transform into
+narrative consequences.
+This brief presents TCP's core architecture, state machines, invariants,
+governance principles, and its slot within the Universal Semantic Token (UST)
+Model.
+\end{abstract}
+
+\section{Introduction}
+
+Teleogenic systems operate under a narrative philosophy:
+actions carry directionality, and directionality shapes outcomes.
+A Teleogenic Cognitive Engine (e.g., QLE) evaluates not only what an actor does,
+but why, under what posture, and with what pattern of consistency.
+
+The Teleo Control Protocol (TCP) provides the \textit{control plane} for such systems.
+It defines how a user's inputs transition from raw commands to
+meaning-bearing transformations inside the Teleogenic Runtime.
+TCP ensures three guarantees:
+
+\begin{enumerate}[label=(\alph*)]
+\item An agent's directive cannot bypass intentional consent.
+\item All transformations follow deterministic state evolution.
+\item Narrative consequences follow stable, auditable semantics.
+\end{enumerate}
+
+TCP is not a moral system; it is a \textit{semantic regulator} for teleogenic computation.
+
+\section{Background}
+
+Teleogenic systems emerge from three convergent disciplines:
+
+\begin{itemize}
+\item \textbf{Semantic Cognition} — how meaning is structured, evaluated, and propagated.
+\item \textbf{Narrative Determinism} — how state evolves through action over time.
+\item \textbf{Posture-Based Dynamics} — the agent's internal stance modifies outcome interpretation.
+\end{itemize}
+
+The Universal Semantic Token (UST) Model provides the foundation:
+Semantic Tokens capture structured intent.
+Teleo Tokens extend these into teleogenic dimensions.
+TCP governs the \textit{flow} through which Teleo Tokens execute.
+
+\section{TCP Overview}
+
+TCP defines a two-phase cycle:
+
+\subsection{Phase 1: CALL}
+CALL opens the relational channel.
+It signals: ``I am engaging with awareness and intent.''
+CALL does not execute anything; it establishes context.
+
+\subsection{Phase 2: COMMAND}
+COMMAND specifies the desired transformation, action, or query.
+
+CALL ensures consent, alignment, and scope.
+COMMAND ensures execution, validation, and outcome.
+
+This dual-phase model prevents
+automatic coercion, misaligned intent, or narrative instability.
+
+\section{Protocol Architecture}
+
+\subsection{System Components}
+
+\begin{itemize}
+\item \textbf{Teleo Token Parser}:
+Validates token structure and teleogenic tags.
+\item \textbf{Posture Engine}:
+Evaluates CALL posture at initiation.
+\item \textbf{Alignment Gate}:
+Enforces CAP (Consent Alignment Protocol) boundaries.
+\item \textbf{Trajectory Engine}:
+Computes the resultant teleogenic vector.
+\item \textbf{Outcome Synthesizer}:
+Converts vector shifts into narrative feedback.
+\end{itemize}
+
+\subsection{High-Level Flow}
+
+\begin{verbatim}
+CALL -> Posture Validation -> Teleo Token Load ->
+COMMAND -> Trajectory Engine -> Outcome Synthesis
+\end{verbatim}
+
+\section{State Machine}
+
+TCP defines a deterministic finite state machine (FSM):
+
+\subsection{States}
+
+\begin{itemize}
+\item \textbf{IDLE}: No active channel.
+\item \textbf{CALL.OPEN}: Initiation detected.
+\item \textbf{CALL.VALID}: Posture + CAP confirmed.
+\item \textbf{COMMAND.PENDING}: Waiting for directive.
+\item \textbf{COMMAND.EXECUTE}: Runtime engaged.
+\item \textbf{RESOLVE}: Generating narrative outcome.
+\item \textbf{CLOSE}: Channel sealed.
+\end{itemize}
+
+\subsection{Transition Logic}
+
+\[
+\text{IDLE} \xrightarrow{\text{CALL}} \text{CALL.OPEN}
+\]
+
+\[
+\text{CALL.OPEN} \xrightarrow{\text{Posture OK}} \text{CALL.VALID}
+\]
+
+\[
+\text{CALL.VALID} \xrightarrow{\text{COMMAND}} \text{COMMAND.PENDING}
+\]
+
+\[
+\text{COMMAND.PENDING} \xrightarrow{\text{Execute}} \text{COMMAND.EXECUTE}
+\]
+
+\[
+\text{COMMAND.EXECUTE} \xrightarrow{\text{Vector Synth}} \text{RESOLVE}
+\]
+
+\[
+\text{RESOLVE} \xrightarrow{\text{Close}} \text{CLOSE}
+\]
+
+\[
+\text{CLOSE} \rightarrow \text{IDLE}
+\]
+
+\section{Teleogenic Semantics}
+
+Teleo Tokens express values such as:
+
+\begin{itemize}
+\item Mercy
+\item Cruelty
+\item Curiosity
+\item Resolve
+\item Devotion
+\item Betrayal-resistance
+\end{itemize}
+
+TCP ensures:
+
+\begin{enumerate}[label=(\arabic*)]
+\item CALL posture modulates interpretation of these traits.
+\item COMMAND actions shift vector magnitudes.
+\item Outcomes reflect the dynamic arc, not isolated events.
+\end{enumerate}
+
+Thus, teleogenic life inside a QLE world behaves coherently.
+
+\section{Invariants}
+
+TCP enforces several invariants:
+
+\begin{itemize}
+\item \textbf{I1: CALL-before-COMMAND}:
+No command accepted without explicit CALL.
+\item \textbf{I2: Posture Integrity}:
+CALL posture must be stable.
+\item \textbf{I3: Consent Boundary}:
+No implicit influence or narrative push.
+\item \textbf{I4: Deterministic Vector Shift}:
+No random teleogenic change.
+\item \textbf{I5: Closed-Loop Resolution}:
+All channels must terminate cleanly.
+\end{itemize}
+
+\section{Governance Model}
+
+TCP is governed by three major frameworks:
+
+\subsection{CAP (Consent Alignment Protocol)}
+Ensures CALL posture is voluntary, uncoerced, and safe.
+
+\subsection{Alignment Theory}
+Ensures that intent, representation, and action remain coherent.
+
+\subsection{Abstract Invariants}
+Prevent metaphysical drift or narrative instability.
+
+\section{Implementation Guidance}
+
+TCP can be cleanly implemented inside any narrative engine:
+
+\subsection{Game Engines}
+Unity, Godot, UE5.
+
+\subsection{AI Systems}
+Multi-agent LLM simulations requiring teleogenic consistency.
+
+\subsection{Hybrid Systems}
+Agentic story generators, tabletop RPG engines, virtual societies.
+
+\section{Comparison to SCP}
+
+\begin{itemize}
+\item SCP governs semantic reasoning.
+\item TCP governs teleogenic narrative transformation.
+\end{itemize}
+
+Where SCP is about cognition, TCP is about consequence.
+
+\section{Conclusion}
+
+TCP v1.0 provides a deterministic, consent-aligned model for interacting with
+Teleogenic Cognitive Engines.
+It ensures narrative stability, ethical clarity, and consistent teleogenic
+vector evolution.
+As QLE and other teleogenic systems emerge, TCP functions as the shared,
+industry-grade runtime control standard.
+
+\end{document}
 

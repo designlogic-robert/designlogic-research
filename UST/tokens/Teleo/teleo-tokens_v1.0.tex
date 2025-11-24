@@ -1,1 +1,264 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{Teleo Tokens v1.0 \\ 
+A Semantic Token Family for Goal-Oriented Cognitive and AI Systems}
+\author{Robert Hansen - Chief Semantic Architect}
+\date{Version 1.0}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Teleo Tokens (TTs) are a Universal Semantic Token (UST) family designed to encode teleological structure: goals, intentions, obligations, constraints, and directed behavior. They represent the core primitives necessary for any reasoning system that must perform goal-directed planning or evaluation. This research brief defines the token schema, the invariants that govern token correctness, the semantic boundaries that stabilize meaning across domains, and the interface expectations for execution engines such as the Universal Semantic Runtime (USR) and the Universal Semantic Engine (USE).
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Teleology refers to explanation in terms of goals, purposes, or intended outcomes. Traditional large language models implicitly learn teleological patterns through statistical correlations, but lack explicit, type-stable representations of goal structure. Teleo Tokens (TTs) formalize these patterns into structured semantic units.
+
+The primary purpose of TTs is to:
+
+\begin{itemize}
+    \item encode goals and subgoals as structured, typed primitives
+    \item stabilize planning semantics across domains
+    \item support deterministic planning under USR
+    \item enforce invariant-based reasoning across contexts
+    \item provide a bridge between abstract intention and executable strategy
+\end{itemize}
+
+Teleo Tokens operate at the same ontological layer as other UST families, but specialize in representing \textit{directed change over time}. TTs describe states, desired states, strategies for transformation, and the semantic operators that connect them.
+
+\section{Motivation}
+
+\subsection{The Need for Explicit Teleology}
+LLMs implicitly represent goals through patterns but cannot treat goals as stable objects. This leads to common issues:
+
+\begin{itemize}
+    \item drift in long-horizon planning
+    \item inconsistent intention interpretation
+    \item failure of multi-step execution
+    \item ambiguity in constraints or desired outcomes
+\end{itemize}
+
+By contrast, TTs create a canonical structure that disambiguates:
+
+\begin{itemize}
+    \item what the agent wants
+    \item why the agent wants it
+    \item what constraints apply
+    \item what tradeoffs exist
+    \item how progress is evaluated
+\end{itemize}
+
+\subsection{Complementarity with Other UST Families}
+Teleo Tokens are not isolated. They interact with:
+
+\begin{itemize}
+    \item Semantic Tokens (ST): grounding of world entities and relationships
+    \item Trade Tokens (TrT): valuation, risk, and economic intention
+    \item USR: deterministic routing and invariant enforcement
+    \item USE: execution-level sequencing of token operations
+    \item Cognitive Engines (CE): reflective reasoning and justification
+\end{itemize}
+
+This paper focuses exclusively on the internal architecture of TTs.
+
+\section{Teleo Token Structure}
+
+Each Teleo Token follows a canonical schema composed of seven components. This schema enables deterministic parsing and compositional reasoning.
+
+\subsection{Core Schema}
+
+\begin{verbatim}
+TELEO_TOKEN {
+    GOAL: <desired_state>
+    ORIGIN_STATE: <current_state>
+    CONSTRAINTS: {...}
+    MOTIVE: <reason_for_goal>
+    STRATEGY_SPACE: {...}
+    SUCCESS_CRITERIA: {...}
+    FAILURE_MODES: {...}
+}
+\end{verbatim}
+
+Each field is semantically typed and validated under USR.
+
+\subsection{Field Interpretations}
+
+\paragraph{GOAL}
+A representation of a desired world-state or mental-state transition. The GOAL field must contain a state-description token or a composite of such tokens.
+
+\paragraph{ORIGIN\_STATE}
+Explicit grounding in the present state. The difference between ORIGIN\_STATE and GOAL defines the teleological gap.
+
+\paragraph{CONSTRAINTS}
+Environmental, legal, ethical, or self-imposed boundaries.
+
+\paragraph{MOTIVE}
+The driving reason or justification behind the goal. This field resolves ambiguity when multiple actions satisfy the same objective.
+
+\paragraph{STRATEGY\_SPACE}
+A set of allowable transformations or action pathways. This set maps to USE's execution operators.
+
+\paragraph{SUCCESS\_CRITERIA}
+How progress or completion is measured.
+
+\paragraph{FAILURE\_MODES}
+Expected failure points or conditions under which the token becomes invalid.
+
+\section{Type System}
+
+\subsection{Purpose of the Type System}
+
+TTs must be type-checked to ensure:
+
+\begin{itemize}
+    \item invariants hold
+    \item strategies align with constraints
+    \item motives map to valid justification types
+    \item success criteria can be evaluated under available engines
+\end{itemize}
+
+\subsection{Primary Teleo Types}
+
+\begin{itemize}
+    \item \textbf{T-Goal}: a desired state or outcome
+    \item \textbf{T-Motive}: causal and justificatory structures
+    \item \textbf{T-Constraint}: boundary or prohibition class
+    \item \textbf{T-Strategy}: sequence of potential actions
+    \item \textbf{T-Metric}: evaluable criteria
+\end{itemize}
+
+Type unification rules are enforced by USR.
+
+\section{Invariants}
+
+Teleo Tokens obey the following class of invariants.
+
+\subsection{Invariant 1 — Teleological Coherence}
+
+The motive must logically support the goal. Formally:
+
+\[
+MOTIVE \vdash GOAL
+\]
+
+\subsection{Invariant 2 — Constraint Compatibility}
+
+No strategy may violate any constraint:
+
+\[
+STRATEGY \not\rightarrow VIOLATION(CONSTRAINT_i)
+\]
+
+\subsection{Invariant 3 — Grounded Origin}
+
+ORIGIN\_STATE must be well-typed and context-resolved by ST tokens.
+
+\subsection{Invariant 4 — Metric Evaluability}
+
+Success metrics must be computationally evaluable by CE or domain engines.
+
+\subsection{Invariant 5 — Deterministic Projection}
+
+Given ORIGIN\_STATE and GOAL:
+
+\[
+\exists STRATEGY \text{ such that deterministic transition is possible}
+\]
+
+\section{Teleo Token Life Cycle}
+
+\subsection{1. Parsing}
+Teleo structure is extracted from text or previous semantic structures.
+
+\subsection{2. Type-Checking}
+USR validates all fields and invariants.
+
+\subsection{3. Integration with ST}
+Entities and relations referenced by TTs are grounded.
+
+\subsection{4. Strategy Expansion}
+USE expands STRATEGY\_SPACE into an executable plan.
+
+\subsection{5. Engine Execution}
+Domain engines perform the required transformations.
+
+\subsection{6. Evaluation}
+Metric-based evaluation verifies completion.
+
+\subsection{7. Reintegration}
+Updated state becomes ORIGIN\_STATE for the next TT cycle.
+
+\section{Relation to USE}
+
+USE interprets Teleo Tokens into concrete action sequences:
+
+\begin{itemize}
+    \item mapping strategies to operators
+    \item pruning invalid pathways
+    \item sequencing goal transformations
+    \item generating micro-intentions for CE reasoning
+\end{itemize}
+
+\section{Relation to USR}
+
+USR provides:
+
+\begin{itemize}
+    \item deterministic symbol routing
+    \item type validation
+    \item invariant enforcement
+    \item planning safety
+\end{itemize}
+
+USR ensures that TTs retain coherence across multiple engines.
+
+\section{Failure Modes}
+
+\subsection{1. Underdetermined Goals}
+GOAL lacks specificity.
+
+\subsection{2. Overdetermined Constraints}
+Impossible or conflicting constraints.
+
+\subsection{3. Invalid Motives}
+MOTIVE is semantically incompatible with GOAL.
+
+\subsection{4. Strategy Explosion}
+STRATEGY\_SPACE grows exponentially.
+
+\section{Applications}
+
+\subsection{AI Assistants}
+
+Stable execution of user intentions.
+
+\subsection{Robotics}
+
+Goal-directed planning with safety constraints.
+
+\subsection{Economic Decision Systems}
+
+Mapping motives, constraints, and strategies in markets.
+
+\subsection{Cognitive Engines}
+
+Reflective introspection and justification.
+
+\section{Conclusion}
+
+Teleo Tokens provide a semantic foundation for any system that must reason about goals. By encoding purpose, constraints, strategy, and evaluation into typed primitives, TTs allow deterministic, interpretable, and verifiable planning across contexts.
+
+They form one of the three major UST families, alongside Semantic Tokens and Trade Tokens, and serve as the teleological backbone of next-generation AI systems.
+
+\end{document}
 
