@@ -1,100 +1,135 @@
-# Research Papers  
-Author: **Robert Hansen**  
-Role: Semantic Systems Architect  
+# Research Papers
 
-This repository is the public research library for my semantic-architecture ecosystem.  
-It contains all formal papers, briefs, diagrams, and LaTeX source files that define and  
-advance my work on **semantic runtimes, token models, cognitive engines, and deterministic  
-AI orchestration**.
+Foundational specifications, protocols, and architectural briefs for the Universal Semantic Systems (USS) ecosystem.
 
----
+This repository contains the formal research layer behind UST (Universal Semantic Token Model), USR (Universal Semantic Runtime), USE (Universal Semantic Engine), and CE (Cognition Engine). Each subfolder holds domain-specific papers, LaTeX source, and supporting notes that define the semantic and computational model underlying USS.
 
-## Purpose
+The purpose of this repo is to provide a coherent, transparent, and technically rigorous record of the standards that govern meaning-processing, semantic orchestration, and domain-engine execution.
 
-This repo exists to:
-
-- publish formal specifications and research papers,
-- track major architectural upgrades across the ecosystem,
-- provide canonical references for USR, UST, Semantic Engines, and Cognitive Engines,
-- serve as a stable citation point for collaborators, researchers, and practitioners,
-- preserve historical lineage as the ecosystem evolves.
-
-All documents in this repo are research-grade and intended for public consumption.
-
----
-
-## Repository Structure
+## Folder Structure
 ```
-/usr/                 Universal Semantic Runtime papers
-/ust/                 Universal Semantic Token Model papers
-/orch-c/              ORCH-C deterministic orchestrator (v1.1+)
-/semantic-engine/     Shared semantic substrate papers
-/cognitive-engines/   Papers for SynCE, FinCE, QLE, and future engines
-/LICENSE              License for all research content (Apache 2.0)
+research-papers/
+│
+├── CE/                         # Cognition Engine papers
+│   ├── ce-cognition-overview.md
+│   ├── ce-cognitive-postures.md
+│   ├── ce-deterministic-cycle.md
+│   ├── ce-modules.md
+│   ├── pipeline-diagram.md
+│   └── README.md
+│
+├── USR/                        # Universal Semantic Runtime papers
+│   ├── Orchestrator/ORCH-C/    # Deterministic planner
+│   │   ├── ORCH-C_v1_1.pdf
+│   │   └── ORCH-Cv1.1.tex
+│   ├── usr-overview.md
+│   ├── usr-architecture-notes.md
+│   ├── usr-evaluation-layer.md
+│   ├── usr-execution-model.md
+│   ├── usr-invariants.md
+│   ├── usr-routing-rules.md
+│   ├── usr-safety.md
+│   └── usr-bridge-layer.md
+│
+├── USE/                        # Universal Semantic Engine papers
+│   ├── use-overview.md
+│   ├── use-execution-cycle.md
+│   ├── use-integration-points.md
+│   ├── use-micro-engines.md
+│   ├── use-routing-rules.md
+│   └── README.md
+│
+├── UST/                        # Universal Semantic Token Model papers
+│   ├── tokens/
+│   │   ├── semantic/
+│   │   ├── Teleo/
+│   │   └── Trade/
+│   ├── control-protocols/
+│   │   ├── SCP/
+│   │   ├── Teleo/
+│   │   └── Trading/
+│   ├── ust-overview.md
+│   ├── ust-lifecycle-and-versioning.md
+│   └── ust-token-schema.md
+│
+├── shared/glossary/
+│   └── GLOSSARY_MASTER.md
+│
+└── STRUCTURE.md                # High-level repository structure map
 ```
+---
+## Purpose of This Repository
 
-Each folder contains:
+This repository serves as the research and documentation backbone for the USS ecosystem.
 
-- `paper.tex` (LaTeX source)  
-- `paper.pdf` (compiled PDF)  
+It contains:
+
+- Canonical definitions
+- Architectural papers
+- Control-protocol specifications
+- Token family models
+- Runtime lifecycle analysis
+- Orchestrator design
+- Engine and cognition flow documentation
+
+Every component in USS — from tokens to runtimes to engines — is defined here before implementation.
+
+This ensures:
+
+- Semantic consistency
+- Deterministic behavior
+- Cross-system invariants
+- Reproducibility for future contributors
+- Traceable lineage from research to code
 
 ---
 
-## Published Papers (Current)
+## Target Audience
 
-### **ORCH-C v1.1 — Deterministic Orchestration for Semantic Systems**
-Defines the ORCH-C orchestrator used for semantic planning, routing, and execution.  
-Includes control-plane structure, semantic token flow, planner invariants, and safety rules.
+This repository is intended for:
 
-### **Planned Papers**  
-(These will be added as LaTeX source + PDFs when ready.)
+- Researchers
+- Engineers working on semantic runtimes
+- Cognitive-architecture designers
+- Domain engine developers
+- Contributors to USS / SynCE / FinCE / QLE
+- Founders evaluating the architecture
+- Peer reviewers preparing for publication-grade analysis
 
-- **USR — Universal Semantic Runtime**  
-  Canonical description of the runtime that sits above all domain stacks.
-
-- **UST — Universal Semantic Token Model**  
-  Defines the fundamental token schema, invariants, and domain-specialization rules.
-
-- **Semantic Engine**  
-  The shared semantic substrate used by all Cognitive Engines.
-
-- **SynCE / FinCE / QLE Engine Briefs**  
-  Domain-specific runtimes built on top of USR and UST.
-
-- **LSM — Large Semantic Model**  
-  A proposal for replacing the probabilistic “shotgun spread” of LLM tokens  
-  with structured semantic token grids governed by UST invariants.
+It is not a general-audience repo.
+It is a professional research corpus.
 
 ---
 
-## Vision
+## How to Read This Repository
 
-The long-term objective of this repository is to establish a **coherent,  
-publishable, industry-standard semantic architecture** that unifies:
+If you are new to the USS architecture, read in this order:
 
-- deterministic planning,  
-- meaning formation,  
-- semantic governance,  
-- safe influence (CAP, ethics),  
-- multi-domain semantic token models,  
-- and cognitive engine construction principles.
+1. shared/glossary/GLOSSARY_MASTER.md
+2. UST/ust-overview.md
+3. USR/usr-overview.md
+4. USE/use-overview.md
+5. CE/ce-cognition-overview.md
 
-These papers together form the foundation of a **framework-of-frameworks**  
-for the next era of AI systems.
+Then dive into token families, control protocols, or runtime engineering depending on your focus.
 
 ---
 
-## License
+## Licensing / Intellectual Property
 
-All research content in this repository is released under the  
-**Apache License 2.0**, ensuring it can be used in both open-source and  
-commercial contexts while preserving attribution and integrity.
+All research contained here is part of the USS Architectural Standard, authored by Robert Hansen — Chief Semantic Architect.
+
+Material in this repository may be referenced academically, but reproduction or distribution without authorization is prohibited.
+
+For collaboration inquiries or research partnerships, contact:
+
+Robert Hansen
+Chief Semantic Architect
+USS Systems
 
 ---
 
-## Contact
+## Status
 
-- **Author:** Robert Hansen  
-- **Role:** Semantic Systems Architect  
-- **GitHub:** https://github.com/designlogic-robert  
-- **LinkedIn:** www.linkedin.com/in/roberthansen-ai  
+This repository is active and continuously expanding.
+New papers, diagrams, and specifications are added as the USS standard evolves.

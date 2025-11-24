@@ -1,1 +1,471 @@
+% =====================================================================
+% Trading Control Protocol (TrCP) v1.0
+% Research Brief (2025)
+% Author: Robert Hansen — Chief Semantic Architect
+%
+% Apache License 2.0 (hidden from PDF output)
+%
+% Copyright 2025 Robert Hansen
+%
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+%
+%     http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an "AS IS" BASIS,
+% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+% See the License for the specific language governing permissions and
+% limitations under the License.
+% =====================================================================
+
+\documentclass[11pt]{article}
+\usepackage{times}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{
+\textbf{Trading Control Protocol (TrCP) v1.0} \\
+A Runtime Control Layer for TradeToken-Governed Markets \\
+\large Research Brief — 2025
+}
+
+\author{
+Robert Hansen \\
+Chief Semantic Architect \\
+\texttt{github.com/designlogic-robert}
+}
+
+\date{2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The Trading Control Protocol (TrCP) v1.0 defines a deterministic, safety-aware
+control layer for executing trading intentions under the Universal Semantic
+Token (UST) Model using Trade Tokens (TrT). Where Trade Tokens encode the
+semantic structure of positions, risk, and intent, TrCP governs the operational
+lifecycle of a trade: from initial hypothesis to order placement, monitoring,
+adjustment, and closure. This research brief presents the protocol's state
+model, invariants, governance principles, and integration points with the
+Universal Semantic Runtime (USR), the Universal Semantic Engine (USE), and
+domain-specific trading engines (FinCE). TrCP is designed to be engine-agnostic,
+broker-neutral, and auditable, making it suitable for both algorithmic and
+assisted human trading systems.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+Trading is an unusually dense domain: information, risk, leverage, latency,
+and psychology collide. Traditional algorithmic trading frameworks operate in
+a numerical mode --- prices, indicators, signals --- with only weak structural
+representations of trader intent or risk posture.
+
+The Trading Control Protocol (TrCP) v1.0 addresses this gap by:
+
+\begin{itemize}
+    \item formalizing the lifecycle of a trade as a semantic process
+    \item ensuring that TradeToken-governed intent is honored without being exceeded
+    \item enforcing invariants around risk, leverage, and compliance
+    \item enabling transparent, auditable flows from idea to executed position
+\end{itemize}
+
+TrCP does not decide \emph{what} to trade. Instead, it defines \emph{how}
+trade instructions, once encoded as Trade Tokens, may safely and coherently
+flow through a runtime, from human or agent intent into concrete orders and
+back into semantic state.
+
+\section{Background}
+
+\subsection{Universal Semantic Token Model and Trade Tokens}
+
+The Universal Semantic Token (UST) Model provides a typed substrate for
+representing structured meaning. Within that model, Trade Tokens (TrT) form a
+specialized family for describing:
+
+\begin{itemize}
+    \item instruments (e.g., NASDAQ equities, futures, options)
+    \item position structures (entry, size, stop, target, timeframe)
+    \item risk constraints (max loss, max exposure, leverage rules)
+    \item strategy context (trend-following, mean reversion, breakout)
+    \item execution preferences (limit, market, partial fills, slippage bounds)
+\end{itemize}
+
+Trade Tokens are designed to be independent of specific broker APIs or
+platforms. They express \emph{what} the trader or agent wants in a stable,
+schema-governed form.
+
+\subsection{The Role of TrCP}
+
+If Trade Tokens define the ``semantic payload'' of a trade,
+TrCP defines the \emph{control protocol} by which:
+
+\begin{enumerate}[label=(\alph*)]
+    \item those tokens are validated and risk-checked,
+    \item transformed into one or more execution plans,
+    \item sequenced into broker-level orders,
+    \item monitored, adjusted, and closed, and
+    \item reintegrated into TradeToken-level state for journaling and learning.
+\end{enumerate}
+
+TrCP lives between semantic intent (UST/TrT) and execution environments
+(FinCE, broker APIs, backtesting engines, simulation sandboxes).
+
+\section{Protocol Overview}
+
+\subsection{High-Level Phases}
+
+TrCP is organized into six canonical phases:
+
+\begin{enumerate}[label=\textbf{P\arabic*:}]
+    \item \textbf{PREPARE} — ingest, validate, and normalize Trade Tokens.
+    \item \textbf{EVALUATE} — risk, edge, and constraint evaluation.
+    \item \textbf{AUTHORIZE} — explicit approval under risk and governance rules.
+    \item \textbf{EXECUTE} — order generation and broker-level submission.
+    \item \textbf{MONITOR} — real-time tracking, adjustments, and conditional logic.
+    \item \textbf{SETTLE} — closure, journaling, and semantic reintegration.
+\end{enumerate}
+
+Each phase has clear entry and exit conditions and must satisfy specific
+invariants to prevent uncontrolled risk or semantic drift.
+
+\subsection{Conceptual Diagram}
+
+Conceptually, the flow can be expressed as:
+
+\begin{verbatim}
+TradeTokenSet
+   -> PREPARE
+   -> EVALUATE (risk, edge, constraints)
+   -> AUTHORIZE (explicit or rule-based)
+   -> EXECUTE (orders via FinCE/Broker)
+   -> MONITOR (runtime adjustments)
+   -> SETTLE (results -> TradeTokenJournal)
+\end{verbatim}
+
+\section{TradeToken Structures under TrCP}
+
+For reference, we assume a canonical Trade Token structure:
+
+\begin{verbatim}
+TRADE_TOKEN {
+    INSTRUMENT: <symbol, venue, asset_class>,
+    DIRECTION: LONG | SHORT,
+    SIZE: <units or notional>,
+    ENTRY: {
+        TYPE: LIMIT | MARKET | STOP | OTHER,
+        PRICE: <float or formula>,
+        VALIDITY: GTC | DAY | SESSION
+    },
+    RISK: {
+        MAX_LOSS: <currency or %>,
+        STOP: <price or dynamic rule>,
+        MAX_PORTFOLIO_RISK: <fraction>
+    },
+    TARGETS: [
+        { PRICE: <float>, SIZE: <fraction> },
+        ...
+    ],
+    TIMEFRAME: INTRADAY | SWING | POSITION,
+    STRATEGY: <label or reference>,
+    META: {
+        TAGS: [...],
+        NOTES: <string>,
+        ORIGIN: HUMAN | AGENT | HYBRID
+    }
+}
+\end{verbatim}
+
+TrCP does not dictate the exact schema, but assumes that Trade Tokens expose at
+least: instrument, direction, size, risk, and execution preferences.
+
+\section{State Machine}
+
+\subsection{States}
+
+TrCP defines a finite state machine that governs the lifecycle of a
+TradeTokenSet:
+
+\begin{itemize}
+    \item \textbf{S0: DRAFT} — Trade Tokens created but unvalidated.
+    \item \textbf{S1: READY} — Tokens syntactically and semantically valid.
+    \item \textbf{S2: RISK\_CHECKED} — Risk and constraints evaluated.
+    \item \textbf{S3: AUTHORIZED} — Explicit or policy-based approval granted.
+    \item \textbf{S4: EXECUTING} — Orders live in the market.
+    \item \textbf{S5: ACTIVE\_POSITION} — Position exists; monitoring ongoing.
+    \item \textbf{S6: CLOSED} — Position fully closed; P\&L realized.
+    \item \textbf{S7: JOURNALED} — Trade integrated into semantic history.
+\end{itemize}
+
+\subsection{Transitions}
+
+\[
+\text{S0 (DRAFT)} \xrightarrow{\text{Validate}} \text{S1 (READY)}
+\]
+
+\[
+\text{S1 (READY)} \xrightarrow{\text{Risk Engine OK}} \text{S2 (RISK\_CHECKED)}
+\]
+
+\[
+\text{S2 (RISK\_CHECKED)} \xrightarrow{\text{User/Policy Approval}} \text{S3 (AUTHORIZED)}
+\]
+
+\[
+\text{S3 (AUTHORIZED)} \xrightarrow{\text{Order Sent}} \text{S4 (EXECUTING)}
+\]
+
+\[
+\text{S4 (EXECUTING)} \xrightarrow{\text{Order Filled}} \text{S5 (ACTIVE\_POSITION)}
+\]
+
+\[
+\text{S5 (ACTIVE\_POSITION)} \xrightarrow{\text{Exit Conditions Met}} \text{S6 (CLOSED)}
+\]
+
+\[
+\text{S6 (CLOSED)} \xrightarrow{\text{Journal Commit}} \text{S7 (JOURNALED)}
+\]
+
+Rejections, cancellations, or risk violations cause transitions to fallback or
+terminal error states (not detailed here but recommended in implementations).
+
+\section{Invariants}
+
+TrCP enforces a set of invariants to prevent misuse and uncontrolled risk.
+
+\subsection{I1: No Execution without Authorization}
+
+No trade may move into EXECUTING state without passing through:
+
+\[
+\text{READY} \rightarrow \text{RISK\_CHECKED} \rightarrow \text{AUTHORIZED}
+\]
+
+Any bypass of this path is an invalid protocol violation.
+
+\subsection{I2: Risk Budget Integrity}
+
+Let $R_{max}$ be the configured maximum portfolio risk
+and $R_{new}$ the incremental risk of the proposed trade.
+Let $R_{current}$ be the risk of existing open positions.
+
+TrCP requires:
+
+\[
+R_{current} + R_{new} \leq R_{max}
+\]
+
+If this inequality fails, the trade cannot be authorized unless other
+positions are reduced or closed.
+
+\subsection{I3: Leverage and Instrument Constraints}
+
+Each instrument class has associated leverage and regulatory bounds.
+TrCP must ensure that the effective leverage implied by SIZE, STOP, and
+account capital does not exceed configured or legal maxima.
+
+\subsection{I4: Semantic Consistency}
+
+The TradeTokenSet must remain semantically consistent before and after
+execution. For example:
+
+\begin{itemize}
+    \item Position direction must match net executed exposure.
+    \item Risk fields must accurately reflect actual stops and targets.
+    \item Timeframe tags must not contradict holding behavior.
+\end{itemize}
+
+\subsection{I5: Journaling Completeness}
+
+Every finalized trade must eventually reach JOURNALED state. Trades that close
+without journaling are protocol violations and should trigger alerts.
+
+\section{Integration with USR and USE}
+
+\subsection{USR (Universal Semantic Runtime)}
+
+USR provides the semantic operating environment in which Trade Tokens and TrCP
+live. For TrCP, USR is responsible for:
+
+\begin{itemize}
+    \item validating token types and field schemas
+    \item enforcing the invariants specified above
+    \item routing TrCP operations to appropriate engines (FinCE, backtester)
+    \item logging semantic events for audit and learning
+\end{itemize}
+
+TrCP is implemented as a protocol module within USR, with well-defined input
+(TradeTokenSet plus context) and output (state transitions plus execution
+instructions).
+
+\subsection{USE (Universal Semantic Engine)}
+
+USE operationalizes semantic structures into concrete actions. In the context
+of TrCP, USE:
+
+\begin{itemize}
+    \item transforms validated Trade Tokens into execution plans
+    \item decomposes plans into atomic broker operations (orders, modifies, cancels)
+    \item sequences monitoring rules and conditional adjustments
+    \item generates semantic deltas (e.g., risk used, realized P\&L) back into UST
+\end{itemize}
+
+TrCP relies on USE for the ``how'' of execution, while TrCP itself governs the
+``whether'' and ``when''.
+
+\section{FinCE and Broker Adapters}
+
+\subsection{FinCE as Trading Engine}
+
+FinCE, as a dedicated cognitive engine for financial markets, is a natural
+host for TrCP. Inside FinCE:
+
+\begin{itemize}
+    \item Trade Tokens express structured trading intent.
+    \item TrCP manages the lifecycle of those tokens.
+    \item Broker adapters map execution plans to specific broker APIs.
+\end{itemize}
+
+\subsection{Broker Neutrality}
+
+TrCP is explicitly broker-neutral. All broker-specific concerns (order syntax,
+API quirks, rate limits) are encapsulated in adapter layers that:
+
+\begin{itemize}
+    \item translate USE-level execution primitives into broker calls
+    \item normalize broker responses into semantic events
+\end{itemize}
+
+This allows TrCP and Trade Tokens to remain stable even if execution venues
+change.
+
+\section{Failure Modes and Safeguards}
+
+\subsection{FM1: Partial Execution}
+
+Orders may fill partially or across multiple venues. TrCP must treat the
+position as ACTIVE\_POSITION only to the extent of filled size and must
+preserve invariant consistency with the fractional exposure.
+
+\subsection{FM2: Slippage and Gaps}
+
+Markets may gap, causing stop orders to fill worse than expected.
+TrCP should:
+
+\begin{itemize}
+    \item record actual fill prices and update realized risk
+    \item trigger post-trade risk review if slippage exceeds thresholds
+\end{itemize}
+
+\subsection{FM3: Connectivity Loss}
+
+If connectivity to broker or data feeds is lost, TrCP should:
+
+\begin{itemize}
+    \item freeze new AUTHORIZE \textrightarrow EXECUTE transitions
+    \item flag existing EXECUTING/ACTIVE\_POSITION states for manual review
+\end{itemize}
+
+\subsection{FM4: Protocol Violations}
+
+Any attempt to bypass phases, ignore risk constraints, or execute trades
+without journaling should be logged as a critical protocol violation, with
+appropriate alerts to operators or supervisory systems.
+
+\section{Human-in-the-Loop vs Fully Automated Modes}
+
+TrCP is designed to support a spectrum of autonomy:
+
+\subsection{Assisted Mode}
+
+\begin{itemize}
+    \item Humans specify Trade Tokens.
+    \item TrCP performs risk checks and recommends actions.
+    \item Humans explicitly approve AUTHORIZE transitions.
+\end{itemize}
+
+\subsection{Hybrid Mode}
+
+\begin{itemize}
+    \item Agents propose Trade Tokens under policy bounds.
+    \item Humans review batches or thresholds.
+\end{itemize}
+
+\subsection{Automated Mode}
+
+\begin{itemize}
+    \item Agents generate and authorize trades under strict policy constraints.
+    \item TrCP still enforces invariants and journaling.
+\end{itemize}
+
+In all cases, TrCP ensures that the same state machine and invariants apply.
+
+\section{Example Flow}
+
+A simplified example:
+
+\begin{enumerate}
+    \item A strategy engine proposes a LONG trade on a NASDAQ stock, with defined stop and target.
+    \item Trade Token is created (S0: DRAFT).
+    \item USR validates schema and semantics (S1: READY).
+    \item Risk engine confirms total portfolio risk remains within bounds (S2: RISK\_CHECKED).
+    \item The trader reviews and approves the trade (S3: AUTHORIZED).
+    \item USE generates limit orders and submits via FinCE to the broker (S4: EXECUTING).
+    \item Orders fill, position becomes live (S5: ACTIVE\_POSITION).
+    \item Price hits target, exit order executes; position closes (S6: CLOSED).
+    \item Trade is encoded into a journal entry and appended to TradeToken history (S7: JOURNALED).
+\end{enumerate}
+
+This flow demonstrates how semantic intent, risk integrity, and execution
+interlock under TrCP.
+
+\section{Relationship to Other Protocols}
+
+\subsection{SCP vs TrCP}
+
+The Semantic Control Protocol (SCP) governs semantic reasoning more broadly:
+question answering, planning, multi-step workflows across arbitrary domains.
+TrCP specializes in a single high-risk vertical: trading.
+
+\begin{itemize}
+    \item SCP asks: ``Which sequence of semantic operations should we run?''
+    \item TrCP asks: ``Which of these trades, if any, should be allowed into the market, and under what constraints?''
+\end{itemize}
+
+\subsection{Teleo Control Protocol vs TrCP}
+
+The Teleo Control Protocol (TCP) focuses on teleogenic arcs in narrative or
+psychological contexts. TrCP can be viewed as its financial sibling: it
+applies similar control-layer ideas to capital, risk, and markets.
+
+\section{Conclusion}
+
+The Trading Control Protocol (TrCP) v1.0 provides a structured, invariant-driven
+control layer for TradeToken-based trading systems. By formalizing the trade
+lifecycle as a semantic state machine --- from DRAFT to JOURNALED ---
+and integrating tightly with USR, USE, and FinCE, TrCP offers:
+
+\begin{itemize}
+    \item broker-neutral, engine-agnostic trading control,
+    \item rigorously bounded risk and leverage,
+    \item transparent, auditable execution flows,
+    \item compatibility with human, hybrid, and automated operation.
+\end{itemize}
+
+As semantic trading architectures mature, TrCP can serve as a foundational
+runtime standard for safe, interpretable, and semantically coherent market
+interaction.
+
+\end{document}
 

@@ -1,1 +1,400 @@
+% =====================================================================
+% Trade Tokens (TrT) v1.0
+% Research Brief (2025)
+% Author: Robert Hansen — Chief Semantic Architect
+%
+% Apache License 2.0 (hidden from PDF output)
+%
+% Copyright 2025 Robert Hansen
+%
+% Licensed under the Apache License, Version 2.0 (the "License");
+% you may not use this file except in compliance with the License.
+% You may obtain a copy of the License at
+%
+%     http://www.apache.org/licenses/LICENSE-2.0
+%
+% Unless required by applicable law or agreed to in writing, software
+% distributed under the License is distributed on an
+% "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF
+% ANY KIND, either express or implied.
+% =====================================================================
+
+\documentclass[11pt]{article}
+\usepackage{times}
+\usepackage{amsmath, amssymb}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{
+\textbf{Trade Tokens (TrT) v1.0} \\
+Semantic, Auditable Structures for Financial Intent \\
+\large Research Brief — 2025
+}
+
+\author{
+Robert Hansen \\
+Chief Semantic Architect \\
+\texttt{github.com/designlogic-robert}
+}
+
+\date{2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Trade Tokens (TrT) v1.0 define the semantic foundation for representing
+trading intent, risk, position structure, and execution preferences under the
+Universal Semantic Token (UST) Model. Where legacy trading systems rely on
+fragile numeric pipelines, ad hoc JSON blobs, or proprietary broker formats,
+Trade Tokens provide a stable, typed, engine-neutral meaning substrate for use
+across human traders, agents, financial cognitive engines (FinCE), and the
+Universal Semantic Runtime (USR).
+
+This research brief formally defines the Trade Token schema, invariants,
+semantics, lifecycle integration with the Trading Control Protocol (TrCP) v1.0,
+and its embedding in the broader Universal Semantic Architecture (USE, USR,
+UST). Trade Tokens serve as the canonical interface between semantic financial
+intent and executable financial behavior across simulated, hybrid, and live
+environments.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------------
+\section{Introduction}
+Trading is one of the highest-risk domains for artificial intelligence due to
+its complexity: continuous uncertainty, leverage amplification, adversarial
+participants, regulatory constraints, and extreme sensitivity to execution
+timing.
+
+Most ``AI trading'' systems today rely on brittle pipelines:
+
+\begin{itemize}
+    \item indicators and raw numeric signals with no semantic meaning,
+    \item opaque agent decisions without auditable reasoning,
+    \item direct broker API calls without structural risk constraints,
+    \item execution logic mixed with strategic logic,
+    \item no global representation of trader intent.
+\end{itemize}
+
+Trade Tokens (TrT) solve this by introducing a formal, semantic structure that
+represents trading intent in a stable and auditable way. They express:
+
+\begin{itemize}
+    \item what the trader or agent intends to do,
+    \item under what risk and leverage constraints,
+    \item with which entry and exit rules,
+    \item within which strategic framework,
+    \item with an explicit lifecycle traceable from idea to journaled result.
+\end{itemize}
+
+Trade Tokens do not depend on any specific trading engine, broker, or strategy.
+They function as the ``semantic payload'' that the Trading Control Protocol
+manages, USE executes, and USR governs.
+
+% ---------------------------------------------------------
+\section{Position of Trade Tokens in USS Architecture}
+
+Trade Tokens live inside the Universal Semantic Token (UST) Model.
+
+\begin{center}
+\begin{verbatim}
+UST (Universal Semantic Tokens)
+   ├── Semantic Tokens (ST)
+   ├── Teleo Tokens (TT)
+   ├── Trade Tokens (TrT)
+   └── Custom Domain Token Families
+\end{verbatim}
+\end{center}
+
+In the financial domain:
+
+\begin{itemize}
+    \item \textbf{TrT} expresses structured trading intent.
+    \item \textbf{TrCP} governs control, validation, and execution lifecycle.
+    \item \textbf{FinCE} provides domain intelligence and execution modeling.
+    \item \textbf{USE} handles plan decomposition and broker sequencing.
+    \item \textbf{USR} enforces invariants, safety, and routing.
+\end{itemize}
+
+TrT is the declarative center of this stack. Everything above and below it
+reacts to the meaning encoded in these tokens.
+
+% ---------------------------------------------------------
+\section{Design Goals}
+
+Trade Tokens are designed around six foundational goals:
+
+\subsection*{1. Engine-Neutral Representation}
+Trading platforms, broker APIs, exchanges, and asset classes vary widely.
+Trade Tokens normalize all of them into a unified, typed semantic substrate.
+
+\subsection*{2. Auditability and Explainability}
+All fields must be explicit, introspectable, and convertible to execution logs,
+risk evaluations, and journaling artifacts.
+
+\subsection*{3. Deterministic Semantics}
+Two identical Trade Tokens on two different engines must express the same
+intent and must lead to equivalent execution plans, subject to market
+conditions.
+
+\subsection*{4. Risk-Constrained by Construction}
+Trade Tokens embed risk boundaries directly into the structure so that intent
+cannot exceed declared limits.
+
+\subsection*{5. Compatible with Human, Hybrid, and Agent Modes}
+Trade Tokens must be readable and writable by humans, USR-managed agents, or
+hybrid collaborations.
+
+\subsection*{6. Broker-Independent}
+No broker-specific information appears inside a Trade Token. Broker
+translations are the job of FinCE and USE.
+
+% ---------------------------------------------------------
+\section{Trade Token Schema (TrT v1.0)}
+
+Trade Tokens follow a canonical schema designed to express all meaning required
+for unambiguous, risk-bounded execution.
+
+\subsection{Top-Level Structure}
+
+\begin{verbatim}
+TRADE_TOKEN {
+    ID: <uuid>,
+    INSTRUMENT: <InstrumentToken>,
+    POSITION: <PositionIntent>,
+    RISK: <RiskModel>,
+    EXECUTION: <ExecutionPrefs>,
+    TARGETS: <List of ExitTargets>,
+    STRATEGY: <StrategyContext>,
+    TIMEFRAME: <TemporalContext>,
+    META: <MetadataBlock>
+}
+\end{verbatim}
+
+Each major block is defined below.
+
+% ---------------------------------------------------------
+\subsection{InstrumentToken}
+
+\begin{verbatim}
+INSTRUMENT {
+    SYMBOL: "AAPL",
+    VENUE: "NASDAQ",
+    ASSET_CLASS: EQUITY,
+    CONTRACT: OPTIONAL (for futures/options)
+}
+\end{verbatim}
+
+The instrument must uniquely define the traded asset.
+
+% ---------------------------------------------------------
+\subsection{PositionIntent}
+
+\begin{verbatim}
+POSITION {
+    DIRECTION: LONG | SHORT,
+    SIZE: <units OR notional>,
+    EXPOSURE_TYPE: UNIT | NOTIONAL | LEVERAGED
+}
+\end{verbatim}
+
+% ---------------------------------------------------------
+\subsection{RiskModel}
+
+\begin{verbatim}
+RISK {
+    MAX_LOSS: <currency OR percent>,
+    STOP: <stop_price OR algorithmic_rule>,
+    PORTFOLIO_LIMIT: <float>,
+    LEVERAGE_LIMIT: <float>
+}
+\end{verbatim}
+
+The risk model must be internally consistent with position size and capital
+constraints. USR enforces this through TrCP invariants.
+
+% ---------------------------------------------------------
+\subsection{ExecutionPrefs}
+
+\begin{verbatim}
+EXECUTION {
+    ENTRY_TYPE: MARKET | LIMIT | STOP | HYBRID,
+    LIMIT_PRICE: OPTIONAL,
+    SLIPPAGE_MAX: <percent>,
+    TIME_VALIDITY: DAY | GTC | SESSION
+}
+\end{verbatim}
+
+% ---------------------------------------------------------
+\subsection{ExitTargets}
+
+\begin{verbatim}
+TARGETS: [
+    { PRICE: <float>, SIZE: <fraction>, CONDITIONS: [...] },
+    ...
+]
+\end{verbatim}
+
+Multiple scaling targets are allowed.
+
+% ---------------------------------------------------------
+\subsection{StrategyContext}
+
+\begin{verbatim}
+STRATEGY {
+    LABEL: "trend_follow",
+    NOTES: "Breakout play on high volume"
+}
+\end{verbatim}
+
+% ---------------------------------------------------------
+\subsection{TemporalContext}
+
+\begin{verbatim}
+TIMEFRAME: INTRADAY | SWING | POSITION
+\end{verbatim}
+
+% ---------------------------------------------------------
+\subsection{MetadataBlock}
+
+\begin{verbatim}
+META {
+    TAGS: [...],
+    ORIGIN: HUMAN | AGENT | HYBRID,
+    NOTES: <string>
+}
+\end{verbatim}
+
+% ---------------------------------------------------------
+\section{Semantic Invariants}
+
+Trade Tokens are governed by four core invariants.
+
+\subsection{Invariant 1: Intent–Execution Coherence}
+Execution must not exceed or contradict token-defined intent.
+
+\subsection{Invariant 2: Risk Boundary Integrity}
+Risk fields must be internally consistent:
+
+\[
+\text{riskUsed} \le \text{MAX\_LOSS}
+\]
+
+\subsection{Invariant 3: Directional Fidelity}
+Filled orders must match declared DIRECTION unless explicitly transformed
+(e.g., hedging rules).
+
+\subsection{Invariant 4: Semantic Round-Trip Stability}
+A Trade Token must be recoverable from its execution logs, producing an
+equivalent semantic structure.
+
+% ---------------------------------------------------------
+\section{Lifecycle Under Trading Control Protocol (TrCP)}
+
+Trade Tokens move through the following phases in TrCP:
+
+\begin{enumerate}
+    \item DRAFT — initial construction
+    \item READY — schema-valid and semantically consistent
+    \item RISK\_CHECKED — evaluated by TrCP's risk engine
+    \item AUTHORIZED — explicit human or policy greenlight
+    \item EXECUTING — orders hit the market
+    \item ACTIVE — position is live
+    \item CLOSED — position resolved
+    \item JOURNALED — full round-trip integration
+\end{enumerate}
+
+Trade Tokens define the structure; TrCP governs the movement.
+
+% ---------------------------------------------------------
+\section{Integration with USR}
+
+USR handles:
+
+\begin{itemize}
+    \item validation of TrT schema and fields,
+    \item routing through TrCP,
+    \item enforcement of semantic invariants,
+    \item logging semantic events,
+    \item multi-engine orchestration between FinCE, USE, and analysis modules.
+\end{itemize}
+
+USR sees a Trade Token as a semantic contract: a promise about intent that must
+not be violated.
+
+% ---------------------------------------------------------
+\section{Integration with USE}
+
+USE transforms Trade Tokens into execution plans:
+
+\begin{itemize}
+    \item decomposing intent into atomic buy/sell actions,
+    \item applying broker-neutral translation,
+    \item sequencing adjustments and conditional logic,
+    \item generating semantic deltas after fills.
+\end{itemize}
+
+Trade Tokens provide the ``what.''  
+USE provides the ``how.''
+
+% ---------------------------------------------------------
+\section{Integration with FinCE}
+
+FinCE is the domain engine for finance:
+
+\begin{itemize}
+    \item produces suggested trade structures,
+    \item evaluates setups and edge,
+    \item conducts backtests and forward tests,
+    \item provides continuous analysis for active positions.
+\end{itemize}
+
+FinCE emits and consumes Trade Tokens as its primary semantic interface.
+
+% ---------------------------------------------------------
+\section{Examples}
+
+Two simplified examples:
+
+\subsection*{Example 1: Human Hybrid Intent}
+
+\begin{verbatim}
+AAPL long breakout
+Entry: limit 182.40
+Stop: 178.90
+Target: 190.00
+Risk: max 1% of capital
+\end{verbatim}
+
+This becomes a structured TrT with explicit fields and invariants.
+
+\subsection*{Example 2: Agent-Generated Setup}
+
+Agent detects high-volume reversal on ETHUSD:
+
+\begin{itemize}
+    \item SHORT entry at 3520
+    \item Stop at 3600
+    \item Two targets
+    \item Max exposure: 0.5% equity
+\end{itemize}
+
+Agent proposes the TrT → TrCP evaluates → USE executes if approved.
+
+% ---------------------------------------------------------
+\section{Conclusion}
+
+Trade Tokens v1.0 provide a deterministic semantic substrate for trading intent,
+risk, and execution structure. They unify human and agent workflows under USR,
+enable safe execution under TrCP, and integrate cleanly with FinCE and USE.
+
+They are the meaning backbone of a semantic financial engine.
+
+\end{document}
 
