@@ -1,316 +1,153 @@
-Universal Semantic Engine (USE) — Overview v1.0
-1. Introduction
+# Universal Semantic Engine (USE) — Overview
 
-The Universal Semantic Engine (USE) is the execution layer that operates above the Universal Semantic Runtime (USR) and on top of Universal Semantic Tokens (USTs).
+The Universal Semantic Engine (USE) is the semantic execution layer of the Universal Semantic System (USS).  
+Where UST defines the meaning units and USR determines how they are routed, USE is responsible for *interpreting and executing* those structured semantic operations.
 
-Where UST represents meaning and USR validates and routes it, USE thinks with it.
+USE converts UST structures into deterministic semantic actions, forming the bridge between routing logic and cognitive reasoning.
 
-USE is the architectural component responsible for:
+---
 
-abstract reasoning
+## 1. Position in the USS Architecture
 
-multi-step inference
+USE operates at the center of the semantic stack:
 
-semantic planning
+UST (Tokens)
+↓
+USR (Routing + Orchestration)
+↓
+USE (Semantic Execution)
+↓
+CE (Cognition Engine)
+↓
+Domain Engines (SynCE, FinCE, QLE)
 
-posture-driven cognition
+yaml
+Copy code
 
-cross-domain decision logic
+This layered model ensures that meaning formation, routing decisions, semantic execution, and cognitive reasoning remain fully separated and inspectable.
 
-goal-directed execution
+---
 
-In short:
-```
-UST = the units of meaning
-USR = the rules for meaning
-USE = the intelligence that uses meaning.
-```
-2. Purpose & Motivation
+## 2. Purpose of USE
 
-Modern AI systems generate compelling text but lack:
+USE has one job:  
+**Interpret semantic structures and perform the operations encoded by the UST tokens and USR routing plan.**
 
-stable internal semantic representations
+It is not a reasoning engine. It is not a decision system.  
+It is the deterministic executor that ensures:
 
-verifiable reasoning chains
+- structured semantics behave predictably  
+- operations are applied consistently  
+- meaning-processing steps are transparent  
+- all output is traceable to UST and USR inputs  
 
-safe, posture-aware decision processes
+USE is the functional spine of USS.
 
-cross-domain interoperability
+---
 
-USE solves these problems by operating on deterministic, validated semantic structures rather than stochastic subword tokens.
+## 3. Core Responsibilities
 
-The purpose of USE is to convert semantic information into structured cognition that can be audited, constrained, and reused across engines.
+### **1. Semantic Interpretation**
+USE reads UST token structures, decodes token invariants, and validates them against the routing plan.
 
-3. Position in the USS Stack
+### **2. Operation Execution**
+Each UST token maps to a primitive semantic action (combine, compare, bind, split, reweight, map, anchor, etc.).  
+USE guarantees these actions are executed in a deterministic order.
 
-USE sits above USR and below domain-specific cognition engines (CE, QLE, FinCE, etc.):
+### **3. Constraint Enforcement**
+USE checks:
 
-UST → USR → USE → Domain Engines → Output
+- token invariants  
+- semantic boundaries  
+- routing constraints  
+- execution safety rules  
 
+Any violation triggers a controlled halt.
 
-UST provides typed semantic atoms.
+### **4. Context Application**
+USE applies context provided by USR:
 
-USR ensures semantic validity and invariant safety.
+- scopes  
+- role profiles  
+- domain boundaries  
+- semantic weights  
+- execution conditions  
 
-USE performs reasoning, inference, and planning.
+This ensures semantics are grounded before CE begins reasoning.
 
-Domain Engines provide specialized domain knowledge and domain-specific semantic capabilities.
+### **5. Output Production**
+USE emits a clean, structured semantic sequence that CE uses to perform actual reasoning.
 
-This makes USE the universal cognition layer—a foundation for all higher engines.
+These sequences are deterministic, meaning independent of model “mood,” randomness, or drift.
 
-4. Core Responsibilities of USE
-4.1 Semantic Reasoning
+---
 
-USE transforms validated semantic structures into reasoning steps:
+## 4. Execution Model Summary
 
-Deductive inference
+The USE execution loop follows a strict four-stage process:
 
-Inductive patterning
+Decode — interpret UST structures
 
-Modal reasoning (belief, intention, obligation)
+Validate — enforce invariants and constraints
 
-Counterfactual and causal evaluation
+Execute — perform semantic operations
 
-Reasoning is posture-driven and domain-aware but always grounded in UST/USR.
+Emit — produce a structured semantic sequence for CE
 
-4.2 Semantic Planning
+yaml
+Copy code
 
-USE constructs executable plans that are:
+This model is further detailed in `use-execution-cycle.md`.
 
-multi-step
+---
 
-type-correct
+## 5. Why USE Matters
 
-invariant-safe
+USE is the stabilizing force that transforms LLM-style behavior into a controlled semantic system.
 
-composable across domains
+Without USE:
 
-Planning becomes stable because intermediate states are semantic, not token-based.
+- tokens would not produce consistent behavior  
+- routing plans could not be trusted  
+- reasoning could not be made reproducible  
+- domain engines would inherit noise from execution  
+- semantics would drift under load or context shift  
 
-4.3 Cognitive Posture Execution
+With USE:
 
-USE applies reasoning postures, such as:
+- meaning-processing becomes deterministic  
+- cognitive layers can rely on stable inputs  
+- domain engines can be precise and predictable  
 
-Analytical
+USE is what makes USS fundamentally different from standard prompt-driven AI behavior.
 
-Narrative
+---
 
-Strategic
+## 6. Relationship to Neighbor Layers
 
-Safety-critical
+### **UST → USE**
+UST provides typed meaning units with invariants.  
+USE interprets those structures and converts them into operations.
 
-Creative (bounded)
+### **USE → CE**
+USE’s output is a deterministic semantic sequence.  
+CE uses this sequence to construct reasoning structures, hypotheses, and explanations.
 
-Postures govern how reasoning flows rather than what the reasoning contains.
+### **USE → Domain Engines (SynCE, FinCE, QLE)**
+Domain engines extend USE outputs with specialized logic, expertise, or heuristic models.
 
-4.4 Domain Delegation
+---
 
-USE identifies which engine should handle each phase of reasoning.
+## 7. Files in This Folder
 
-Examples:
+- `use-overview.md` — This file  
+- `use-execution-cycle.md` — Full execution loop specification  
+- `use-integration-points.md` — How USE interacts with UST, USR, CE, and domain engines  
+- `use-routing-rules.md` — Execution-facing interpretation of routing rules  
+- `use-micro-engines.md` — Subcomponents that handle specialized semantic operations  
 
-Medical diagnosis (MedCE)
+---
 
-Financial forecasting (FinCE)
+## 8. Status
 
-Narrative/world reasoning (QLE)
-
-Legal evaluation (LegalCE)
-
-USE orchestrates them without forcing domain engines to couple to each other.
-
-5. Internal Architecture of USE
-5.1 Cognitive Kernel
-
-The minimal core responsible for posture selection, reasoning mode switching, and runtime state tracking.
-
-5.2 Semantic Workspace
-
-A structured “scratchpad” for:
-
-semantic goals
-
-working memory
-
-constraint sets
-
-intermediate states
-
-open inferences
-
-This workspace is persistent, inspectable, and exportable.
-
-5.3 Posture Engine
-
-Applies the cognitive stance that determines:
-
-tone
-
-interpretive approach
-
-inference bias
-
-risk appetite
-
-domain sensitivity
-
-ethical modulation
-
-5.4 Execution Planner
-
-Builds semantic plans by:
-
-identifying constraints
-
-building execution graphs
-
-scheduling reasoning steps
-
-routing to domain engines
-
-verifying semantic validity after each transformation
-
-5.5 Reasoning Monitor
-
-Tracks:
-
-drift
-
-contradiction
-
-invariant violations
-
-CAP autonomy limits
-
-domain boundary respect
-
-This ensures USE remains safe and coherent.
-
-6. Interaction With USR
-
-USE relies on USR but does not replace it.
-
-USR guarantees meaning is valid.
-
-USE transforms meaning into cognition.
-
-USR enforces invariants during execution.
-
-USE generates plans that USR validates.
-
-A simple analogy:
-
-UST = semantic DNA
-
-USR = cellular machinery that validates DNA and prevents mutation
-
-USE = the organism that grows, adapts, and acts
-
-They are separate layers, each necessary.
-
-7. Interaction With Domain Engines
-
-USE is domain-agnostic but domain-integrated.
-
-It:
-
-Breaks a problem into semantic subtasks
-
-Matches tasks to appropriate domain engines
-
-Sends UST-structured instructions
-
-Receives validated domain outputs
-
-Integrates them into a global reasoning chain
-
-This supports cross-domain cognition, such as:
-
-“Should I invest in a medical device company given regulatory changes and market sentiment?”
-
-This requires:
-
-financial reasoning
-
-regulatory reasoning
-
-medical reasoning
-
-risk modeling
-
-Domain engines specialize; USE composes.
-
-8. Safety, Ethics, and Invariants
-
-USE operates under invariant supervision:
-
-GR-007 Truth Over Comfort
-
-GR-008 Consent and Autonomy (via CAP)
-
-Domain-scope safety
-
-Posture-aligned ethics
-
-Drift prevention
-
-Boundary control
-
-USE does not invent its own ethics—it implements the invariant layer defined by USR.
-
-9. Failure Modes & Mitigations
-9.1 Inference Drift
-
-Mitigation: USR revalidates intermediate states.
-
-9.2 Overreach Across Domains
-
-Mitigation: Boundary Manager prevents unauthorized cross-domain assumptions.
-
-9.3 Posture Misalignment
-
-Mitigation: Posture Engine recalibrates using semantic signals.
-
-9.4 Semantic Explosion
-
-Plans can grow out of control.
-
-Mitigation: Execution Planner prunes nonproductive reasoning branches.
-
-10. Future Evolution
-
-USE will evolve toward:
-
-full distributed cognition
-
-multi-agent semantic collaboration
-
-self-monitoring learning loops
-
-cross-lingual and cross-cultural semantic integration
-
-pluggable inference engines
-
-certified reasoning profiles for regulated use
-
-USE is the bridge from modern probabilistic AI to coherent, modular, post-token AI ecosystems.
-
-11. Summary
-
-USE transforms validated semantic information into structured, posture-aware reasoning and planning.
-
-It is:
-
-domain-agnostic
-
-deterministic in structure
-
-posture-driven in style
-
-invariant-governed in safety
-
-orchestrated through USR
-
-powered by UST
-
-USE is the intelligence layer inside the USS architecture.
+USE is considered a stable core component of the Universal Semantic System and is suitable for public architecture papers and external review.
