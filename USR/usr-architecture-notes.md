@@ -64,8 +64,7 @@ Routing uses a rule-set:
 
 Route = f(UST.type, invariants, context_state, domain_scope)
 
-yaml
-Copy code
+
 
 Routing is predictable and auditable.
 
@@ -78,8 +77,6 @@ Example:
 
 INPUT → Normalize → Validate → Route → Compose Plan → Hand Off to USE
 
-yaml
-Copy code
 
 Plans can include:
 
@@ -125,8 +122,7 @@ Ingress always flows through:
 
 Parse → Normalize → Validate
 
-yaml
-Copy code
+
 
 ---
 
@@ -160,7 +156,7 @@ Nothing exits USR without a plan.
 # 4. Execution Flow (End-to-End)
 
 Below is the complete semantic path through USR:
-
+```
 User Input
 ↓
 Parsing Layer (probabilistic)
@@ -184,9 +180,7 @@ Semantic Operations Executed
 Results forwarded to CE / Domain Engines
 ↓
 Final Output
-
-yaml
-Copy code
+```
 
 USR essentially converts messy, ambiguous meaning into a *safe, deterministic execution plan*.
 
@@ -232,8 +226,7 @@ STEP 4: Route financial components to FinCE
 STEP 5: Combine results under type-check
 STEP 6: Hand off to CE for justification
 
-yaml
-Copy code
+
 
 Plans are repeatable.  
 Given the same UST, USR produces the same plan.

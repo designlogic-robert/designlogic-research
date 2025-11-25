@@ -39,8 +39,6 @@ EXECUTE Dispatch to USE and CE
 
 RESOLVE Collect, normalize, return
 
-yaml
-Copy code
 
 Each stage is well-bounded and never overlaps with another.
 
@@ -59,8 +57,7 @@ routing_hints: optional,
 provenance: metadata
 }
 
-markdown
-Copy code
+
 
 During **RECEIVE**, USR:
 
@@ -97,8 +94,7 @@ restrictions: RestrictionSet,
 hints: RoutingHints?
 }
 
-yaml
-Copy code
+
 
 This signature drives the PLAN stage.
 

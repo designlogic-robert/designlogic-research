@@ -1,222 +1,181 @@
-Universal Semantic Token (UST) Overview — Research Brief Outline
-Abstract
+# UST — Universal Semantic Token Model  
+Version 1.0 • Universal Semantic Systems (USS)
 
-Universal Semantic Tokens (USTs) provide a typed, stable, cross-domain representation of meaning that replaces surface-form tokens as the atomic unit of reasoning. They serve as the canonical data model for semantic computation across the USS architecture. This brief outlines the motivation, structure, properties, and architectural role of USTs, forming the substrate beneath the Universal Semantic Runtime (USR) and the Universal Semantic Engine (USE).
+The Universal Semantic Token Model (UST) defines the typed, invariant-based meaning units that power all higher layers of the USS architecture. UST provides the “atoms of meaning” that flow through the Universal Semantic Runtime (USR), are interpreted by the Universal Semantic Engine (USE), and ultimately drive cognitive execution inside CE stacks (SynCE, FinCE, QLE, etc.).
 
-1. Introduction
-1.1 The Problem
+UST is the foundation of deterministic semantics in USS.
 
-Current LLMs reason over subword tokens, not meaning.
+---
 
-Surface tokens lack stability, type structure, cross-lingual equivalence, or compositional guarantees.
+## 1. Purpose
 
-Multi-domain reasoning fails because semantics drift, fracture, or lose structure.
+Modern LLMs operate on unstructured text. UST replaces this with **typed semantic structures** that carry explicit meaning, constraints, and invariants.  
 
-1.2 The UST Solution
+UST ensures that:
+- meaning is explicit rather than implicit  
+- tokens obey well-defined semantic rules  
+- runtimes can enforce deterministic behavior  
+- higher-level engines can reason on stable structures  
 
-A single, typed semantic representation layer analogous to a “universal data model for meaning.”
+In short, UST converts natural language chaos into structured meaning.
 
-USTs capture structure, constraints, roles, temporal relations, and domain-specific meaning profiles.
+---
 
-Enables deterministic semantic planning and auditable reasoning.
+## 2. Core Design Principles
 
-1.3 Role in USS Architecture
+### **2.1 Typed Semantics**
+Each token belongs to a token family (Semantic, Teleo, Trade, etc.) and carries explicit fields, constraints, and purpose.
 
-UST = Base layer (representation)
+### **2.2 Invariants**
+Every UST token includes invariant rules that must always hold true.  
+These allow the runtime to enforce correctness and prevent semantic drift.
 
-USR = Runtime layer (validation, routing, invariants)
+### **2.3 Deterministic Serialization**
+UST tokens serialize into a standard structure so any runtime, engine, or external system can interoperate.
 
-USE = Execution layer (agents, planners, engines)
+### **2.4 Domain Extensibility**
+New domains (SynCE, FinCE, QLE, etc.) can introduce new token families without breaking core invariants.
 
-UST is to meaning what JSON, IR, or bytecode was to computation: the portable, shared format that makes modular systems possible.
+---
 
-2. Background and Prior Work
-2.1 Linguistic Traditions
+## 3. UST in the USS Architecture
 
-FrameNet, PropBank, AMR, semantic role labeling.
+UST is the *lowest semantic layer* in USS:
 
-Similarities: predicate-argument structure, compositional semantics.
+UST → USR → USE → CE → Domain Engines → Output
+│ │ │ │
+Tokens Deterministic Execution Cognition
+Routing Sequencing Reasoning
 
-Limitations: not type-safe, not universal, not runtime-grade.
+markdown
+Copy code
 
-2.2 Programming Language Analogy
+- **UST** defines meaning units  
+- **USR** transports and evaluates them  
+- **USE** interprets and sequences operations  
+- **CE** executes them as part of the cognition cycle  
+- **Domain Engines** add real-world knowledge  
 
-USTs behave like strongly typed AST nodes.
+UST is therefore both the first and most important layer of semantic control.
 
-They provide:
+---
 
-Deterministic structure
+## 4. Token Families
 
-Invariants
+UST 1.0 currently defines three families:
 
-Composition rules
+### **4.1 Semantic Tokens**
+Base tokens for meaning representation:
+- Concept
+- Relation
+- Operation
+- Value
 
-Safety checks
+Used by SynCE and general cognition workflows.
 
-2.3 What USTs Innovate
+### **4.2 Teleo Tokens**
+Tokens representing *goals, intent, directionality*, and teleogenic processes.
+Used in CE, SynCE, and long-horizon reasoning.
 
-Domain-agnostic semantic primitives.
+### **4.3 Trade Tokens**
+Tokens representing *exchange, valuation, negotiation*, and structured decision-making.
+Used in FinCE and other transactional engines.
 
-Cross-domain invariants.
+Each family has:
+- a `.tex` research paper  
+- a canonical schema  
+- a set of invariants  
+- a UST-compliant serialization format  
 
-Type-enforced composition across engines.
+---
 
-Versioned semantic definitions.
+## 5. Token Structure (High-Level)
 
-This section positions USTs as a new layer between NLP representations and computational type systems.
+All UST tokens share a universal structure:
 
-3. Core Definitions
-3.1 UST (Universal Semantic Token)
+{
+type: TokenType,
+version: "1.0",
+fields: { … },
+invariants: [ … ],
+metadata: {
+domain,
+lineage,
+timestamp,
+author
+}
+}
 
-A typed semantic unit with:
+yaml
+Copy code
 
-Identifier
+This structure ensures that:
+- tokens are machine-verifiable  
+- meaning is inspectable  
+- invariants can be enforced by runtimes  
+- higher layers can trust the input  
 
-Semantic family
+---
 
-Schema
+## 6. Lifecycle
 
-Type signature
+UST tokens follow a standardized lifecycle:
 
-Version metadata
+1. **Creation** — token is defined with required fields  
+2. **Validation** — invariants are checked by USR  
+3. **Interpretation** — USE determines the operation  
+4. **Execution** — CE incorporates token meaning into reasoning  
+5. **Extension** — Domain Engines add domain-specific logic  
+6. **Archival** — token is logged for reproducibility (LLpL)  
 
-Domain-scope metadata
+This lifecycle is core to deterministic cognition.
 
-Relational fields (arguments)
+---
 
-3.2 UST Families
+## 7. Integration Points
 
-Semantic Tokens (ST) – Base meaning primitives.
+UST integrates with all USS layers:
 
-TeleoTokens (TT) – Goal/intention/agentic structure.
+- **USR**: Routing, invariant enforcement, semantic safety  
+- **USE**: Operation selection, path sequencing  
+- **CE**: Modeling, justification, cognitive posture selection  
+- **Domain Engines**: Domain-specific operators  
+- **LLpL**: Canonical persistence of semantic states  
+- **ORCH-C**: Plan-level deterministic token validation  
 
-TradeTokens (TrT) – Economic and transaction semantics.
+All USS architecture depends on UST stability.
 
-3.3 UST Properties
+---
 
-Stability
+## 8. Domain Engine Mapping
 
-Deterministic structure
+Future CE stacks extend UST with new token families:
 
-Versioning
+- **SynCE** (core cognition) → Semantic + Teleo  
+- **FinCE** (financial reasoning) → Semantic + Trade  
+- **QLE** (quest/logical engines) → Semantic + Teleo variants  
 
-Cross-domain interoperability
+UST guarantees interoperability between all CE stacks.
 
-Compositional safety
+---
 
-3.4 UST Composition Rules
+## 9. Future Directions (v1.1 – v1.3)
 
-Type-unification requirements
+Planned enhancements include:
 
-Temporal/causal constraints
+- richer token invariants  
+- schema validation tooling  
+- token diff/trace analysis  
+- domain-level serialization optimizers  
+- DSL for defining new token families  
 
-Domain-boundary markers
+These will support larger multi-engine systems.
 
-Invariant filters
+---
 
-4. Architecture of UST
-4.1 High-Level Architecture
+## 10. Summary
 
-Lexical Layer → Semantic Parsing → UST Construction → USR Validation → USE Execution
+UST is the semantic foundation of the Universal Semantic System.  
+By defining typed meaning units with strict invariants, UST enables deterministic semantics, stable reasoning, and reliable cognitive architectures across every layer of USS.
 
-4.2 UST Schema Layout
-
-Token ID
-
-Semantic class
-
-Roles & arguments
-
-Constraints
-
-Type signature
-
-Domain extensions
-
-4.3 UST Lifecycle
-
-Constructed by semantic parsers.
-
-Validated, typed, normalized by USR.
-
-Routed into domain engines.
-
-Used for planning/execution.
-
-Recombined to produce outputs.
-
-4.4 Diagram Placeholder
-
-Add a flow diagram here later.
-
-5. Semantic Properties
-5.1 Determinism
-
-USTs enforce:
-
-Type consistency
-
-Invariant checks
-
-Stable interpretation across engines
-
-5.2 Cross-Lingual Consistency
-
-All languages map to the same UST.
-E.g. “doctor,” “医师,” “medic” → UST.MEDICAL_PRACTITIONER.v1
-
-5.3 Compositionality
-
-USTs allow multi-step reasoning without drift.
-
-5.4 Safety & Validation
-
-Type-checking
-
-Invariant filters
-
-Domain-boundary enforcement
-
-6. Limitations
-6.1 Grounding Problem
-
-USTs must eventually connect to perceptual or empirical evidence.
-
-6.2 Semantic Drift
-
-Languages evolve faster than stable schema.
-
-6.3 Domain Edge Cases
-
-High-ambiguity domains may resist rigid typing.
-
-6.4 Cold Start Cost
-
-Initial UST definition requires heavy domain knowledge.
-
-7. Future Work
-7.1 Automated UST Construction
-
-Learning UST schema from corpora.
-
-7.2 Domain Extension Packs
-
-Per-domain semantic libraries (medical, legal, economic).
-
-7.3 UST Version Evolution
-
-Living-standard governance.
-
-7.4 Semantic Compilers
-
-Systems that translate raw text into optimized UST pipelines.
-
-Appendix
-
-Glossary terms
-
-Example UST instances
-
-Comparison with other semantic formalisms
-
-Draft schema definitions
+Everything in USS begins with UST.

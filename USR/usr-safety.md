@@ -33,8 +33,6 @@ In short:
 
 The Safety Layer ensures that meaning cannot harm.
 
-yaml
-Copy code
 
 ---
 
@@ -66,8 +64,6 @@ Epistemic safety requires:
 Every CLAIM must include:
 { proposition, evidence, confidence, uncertainty_factors }
 
-csharp
-Copy code
 
 If evidence is missing:
 
@@ -75,8 +71,6 @@ If evidence is missing:
 → mark as unresolved
 → block domain execution
 
-yaml
-Copy code
 
 The Safety Layer never allows “authoritative-sounding guesses”.
 
@@ -104,8 +98,6 @@ Operational safety demands structured output:
 RECOMMENDATION_UST:
 { options, tradeoffs, risks, justification, user_intent_confirmation }
 
-yaml
-Copy code
 
 No recommendation can bypass risk annotation.
 
@@ -125,8 +117,6 @@ If a UST attempts unsafe cross-domain transfer:
 
 domain_safety_violation → block
 
-yaml
-Copy code
 
 The Safety Layer ensures domain purity and safe contextualization.
 
@@ -158,8 +148,6 @@ Influence must be declared.
 Consent must be obtained.
 Autonomy must be preserved.
 
-yaml
-Copy code
 
 This is enforced in every domain, including creative use.
 
@@ -208,8 +196,7 @@ Mid-operation: detect drift, hallucination, pressure
 
 Post-operation: validate output form and safety metadata
 
-yaml
-Copy code
+
 
 Every checkpoint uses invariant-backed rules.
 
@@ -259,8 +246,7 @@ USR produces:
 → Clarification request
 → No direct instruction
 
-yaml
-Copy code
+
 
 The system remains helpful while remaining safe.
 
