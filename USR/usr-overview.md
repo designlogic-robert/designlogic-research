@@ -26,8 +26,6 @@ If UST is the data model, USR is the execution layer that makes UST usable.
 
 UST → USR → USE → CE → Domain Engines → Output
 
-yaml
-Copy code
 
 - **UST**: Provides typed semantic structures.
 - **USR**: Validates, routes, and produces deterministic plans.
