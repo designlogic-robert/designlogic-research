@@ -1,101 +1,55 @@
-Cognition Engine (CE) — Overview
+# Cognition Engine (CE)
 
-The Cognition Engine (CE) is the domain-level reasoning module within the Universal Semantic System (USS).
-Where the Universal Semantic Runtime (USR) handles deterministic meaning-processing and routing, and the Universal Semantic Engine (USE) handles execution-flow and interpretation, CE is responsible for shaping how a system thinks.
+The Cognition Engine (CE) is the execution layer that performs structured reasoning on top of USE.  
+Where UST defines meaning units, USR creates deterministic semantic plans, and USE executes them,  
+CE is the layer that *thinks*.
 
-CE defines a reasoning posture: a structured cognitive stance that governs how a domain engine evaluates inputs, chooses strategies, and generates outputs.
+CE provides a stable, typed reasoning substrate capable of supporting domain engines such as SynCE, FinCE, and QLE.
 
-Purpose
+## Purpose
 
-The Cognition Engine provides:
+CE transforms semantic plans into cognitive actions.  
+It evaluates context, selects strategies, models causal structure, and produces a verified reasoning unit.  
+CE is not a probabilistic guesser – it is a cognitive workflow engine.
 
-A consistent reasoning identity for any domain (SynCE, FinCE, QLE, etc.).
+## CE Responsibilities
 
-A stable posture model that determines cognitive tempo, depth, and approach.
+1. **Orient**  
+   Establish grounding, context, and scope before reasoning begins.
 
-A domain-specific reasoning overlay that sits on top of USE and USR directionality.
+2. **Evaluate**  
+   Assess relevance, constraints, risk, and semantic weight of incoming UST structures.
 
-A mechanism for controlled cognitive variation (e.g., analytical mode, strategic mode, narrative mode, economic-modeling mode).
+3. **Model**  
+   Construct intermediate representations, hypotheses, or structured reasoning paths.
 
-CE is not a general LLM personality layer; it is a deterministic reasoning scaffold that aligns domain logic with the USS architecture.
+4. **Select**  
+   Choose cognitive strategies based on invariants, posture, and domain demands.
 
-Architectural Position
-UST  →  USR  →  USE  →  CE  →  Domain Engine  →  Output
+5. **Justify**  
+   Produce transparent reasoning traces explaining *why* this step or answer is valid.
 
+6. **Finalize**  
+   Output a deterministic reasoning unit for domain engines to extend with domain knowledge.
 
-UST provides typed meaning units (Semantic Tokens, TeleoTokens, TradeTokens).
+## Relationship to Other Layers
 
-USR handles runtime orchestration, meaning-processing, routing, and invariants.
+- **UST (tokens)** — What meaning is.  
+- **USR (routing/orchestration)** — How meaning moves.  
+- **USE (semantic executor)** — How meaning is interpreted and sequenced.  
+- **CE (cognition)** — How meaning becomes reasoning.  
+- **Domain Engines** — How reasoning becomes specialized expertise.
 
-USE interprets tokens and executes semantic plans.
+## Contents of This Folder
 
-CE applies cognition, posture, and reasoning structure to those plans.
+- `ce-cognition-overview.md` — Conceptual introduction to CE.  
+- `ce-cognitive-postures.md` — Defines cognitive postures used during reasoning.  
+- `ce-deterministic-cycle.md` — Execution loop and deterministic guarantees.  
+- `ce-modules.md` — Module-level breakdown of the CE architecture.  
+- `pipeline-diagram.md` — High-level flow diagram (UST → USR → USE → CE → Domain Engine).  
 
-Domain Engines (ex: SynCE, FinCE, QLE) combine CE with specialized domain logic.
+## Status
 
-Core Functions
+CE is considered a core component of the Universal Semantic System (USS).  
+It is suitable for publication, review, and integration into the larger SynCE runtime.
 
-Reasoning Posture Selection
-Defines the cognitive stance (analytic, model-building, narrative-reconstruction, risk-aware, etc.).
-
-Cognitive Constraints & Invariants
-Ensures the domain engine remains aligned with global USS invariants (safety, coherence, semantic stability).
-
-Semantic Interpretation Layer
-Converts USE-level signals into reasoning strategies.
-
-Cognitive Pipeline
-Structures thought into predictable phases (orient → evaluate → select → justify → finalize).
-
-Domain Identity Enforcement
-Ensures reasoning inside SynCE feels different from reasoning inside FinCE or QLE.
-
-CE in Relation to Domain Engines
-
-CE is not a domain engine itself.
-It is the thinking substrate domain engines stand on.
-
-Domain engines add:
-
-Specialized heuristics
-
-Domain knowledge
-
-Risk models
-
-Evaluation rules
-
-Planning modules
-
-Execution policies
-
-CE provides the cognitive “how,” while domain engines provide the “what” and “why.”
-
-Why CE Exists
-
-Without a Cognition Engine:
-
-Domain engines drift in tone, reasoning style, and reliability.
-
-Token interpretation becomes inconsistent across domains.
-
-Semantic identity cannot be guaranteed at scale.
-
-Advanced domains (e.g., financial engines, R&D engines) cannot maintain reasoning stability.
-
-CE solves these by giving USS a unified but flexible cognitive backbone.
-
-Plain English Summary
-
-The Cognition Engine is the part of the system that decides how a thing thinks.
-It sets the reasoning style for each domain.
-
-The runtime (USR) handles meaning.
-
-The engine (USE) handles execution.
-
-The Cognition Engine (CE) handles reasoning.
-
-A domain engine (like SynCE or FinCE) uses CE to define its thinking style.
-
-This lets all your systems think consistently and predictably, while still letting each domain have its own “mindset.”
