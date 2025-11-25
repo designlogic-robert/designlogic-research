@@ -3,8 +3,8 @@ Connecting UST → USR → USE → CE
 
 The USR Bridge Layer is the coordination membrane that connects the Universal Semantic Token Model (UST), the Universal Semantic Runtime (USR), the Universal Semantic Engine (USE), and all domain-specific Cognitive Engines (CEs). It ensures stable, invariant-preserving transmission of meaning across layers without semantic drift, token corruption, or execution ambiguity.
 
-``If UST defines semantic structure and USR defines runtime logic,  
-the Bridge Layer defines how semantic structure enters runtime logic safely.``
+If UST defines semantic structure and USR defines runtime logic, the Bridge Layer defines how semantic structure enters runtime logic safely.
+
 ---
 
 ## 1. Purpose of the Bridge Layer
