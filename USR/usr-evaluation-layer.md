@@ -95,8 +95,7 @@ Analytical model:
 
 drift_score = Δ(UST_in, UST_out)
 
-yaml
-Copy code
+
 
 If `drift_score > threshold`, evaluation fails and triggers corrective action.
 
