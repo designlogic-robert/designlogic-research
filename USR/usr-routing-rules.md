@@ -130,8 +130,7 @@ Contextual Rules
 
 Plan-Level Rules
 
-yaml
-Copy code
+
 
 The first matching rule wins.
 
@@ -181,8 +180,7 @@ If processing a UST would cross a domain boundary:
 
 USR blocks → reroutes → requests clarification → or flags error
 
-vbnet
-Copy code
+
 
 Example:
 
@@ -190,8 +188,7 @@ A financial UST tries to influence a medical decision:
 
 BoundaryError: domain_violation (finance → medical)
 
-yaml
-Copy code
+
 
 Domain boundaries are **mandatory walls**, not suggestions.
 
@@ -305,8 +302,6 @@ for the right operation →
 under the right invariants →
 with no domain contamination.
 
-csharp
-Copy code
 
 USR routing is the backbone of semantic coherence.
 
