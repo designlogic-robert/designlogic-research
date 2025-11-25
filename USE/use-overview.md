@@ -21,8 +21,7 @@ CE (Cognition Engine)
 ↓
 Domain Engines (SynCE, FinCE, QLE)
 
-yaml
-Copy code
+
 
 This layered model ensures that meaning formation, routing decisions, semantic execution, and cognitive reasoning remain fully separated and inspectable.
 
@@ -94,8 +93,7 @@ Execute — perform semantic operations
 
 Emit — produce a structured semantic sequence for CE
 
-yaml
-Copy code
+
 
 This model is further detailed in `use-execution-cycle.md`.
 
