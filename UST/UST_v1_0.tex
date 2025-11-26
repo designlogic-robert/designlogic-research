@@ -1,0 +1,180 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{setspace}
+\setstretch{1.15}
+
+\title{UST v1.0 --- Universal Semantic Token Model}
+\author{Robert Hansen}
+\date{November 2025}
+
+\begin{document}
+\maketitle
+
+\section*{Abstract}
+UST v1.0 defines a universal, domain-agnostic semantic token model for deterministic AI systems.
+The model provides a typed, extensible structure for representing meaning, intent, constraints, and routing data in a machine-verifiable format.
+UST enables AI runtimes and orchestration engines to operate on meaning rather than raw natural language, enabling predictable behavior, reproducible flows, and scalable multi-agent coordination.
+
+\section{Introduction}
+Modern AI systems rely primarily on natural-language prompts. While flexible, prompts lack explicit structure, type safety, and deterministic interpretation.
+As multi-agent systems scale, prompt-driven workflows break or drift.
+
+The Universal Semantic Token Model (UST) establishes a unified semantic substrate that captures:
+\begin{itemize}
+    \item domain-neutral meaning,
+    \item system intents and directives,
+    \item constraints and guarantees,
+    \item routing and control metadata.
+\end{itemize}
+
+UST serves as the base layer for deterministic execution, state management, and multi-agent orchestration.
+
+\section{Design Principles}
+UST is guided by five principles:
+
+\subsection{Universality}
+The schema applies across domains without modification.
+
+\subsection{Determinism}
+Tokens support reproducible interpretation regardless of runtime context.
+
+\subsection{Extensibility}
+Families and types may be added without breaking existing systems.
+
+\subsection{Clarity}
+Each token has a single, unambiguous meaning.
+
+\subsection{Governance Compatibility}
+Tokens support validation, auditing, and external governance.
+
+\section{Token Structure}
+A UST token is defined as:
+
+\begin{verbatim}
+Token {
+    id: UniqueIdentifier
+    family: TokenFamily
+    type: TokenType
+    version: Version
+    payload: TypedPayload
+    constraints: ConstraintSet
+    metadata: Metadata
+}
+\end{verbatim}
+
+\subsection{Unique Identifier}
+A stable hash across family, type, version, and payload signature.
+
+\subsection{Token Family}
+A broad semantic category, e.g., Semantic, Teleo, Trade.
+
+\subsection{Token Type}
+A subtype representing a specific semantic role.
+
+\subsection{Version}
+Semantic version of the token type.
+
+\subsection{Typed Payload}
+Structured content with type guarantees.
+
+\subsection{Constraints}
+Optional validation, safety, or behavioral limits.
+
+\subsection{Metadata}
+Contextual information including timestamps or provenance.
+
+\section{Token Families in v1.0}
+Three families are standardized:
+
+\subsection{Semantic Tokens}
+Represent descriptive information, concepts, or relationships.
+
+\subsection{Teleo Tokens}
+Represent goals, objectives, or directed intent.
+
+\subsection{Trade Tokens}
+Represent value exchange, negotiation, or commitments.
+
+\section{Deterministic Interpretation}
+Deterministic behavior emerges from:
+\begin{itemize}
+    \item typed payload specifications,
+    \item versioned schemas,
+    \item explicit constraints,
+    \item stable identifiers,
+    \item predictable validation rules.
+\end{itemize}
+
+Agents must not infer meaning beyond the token contents.
+
+\section{Validation Rules}
+Each token must satisfy:
+\begin{enumerate}
+    \item Schema validity
+    \item Type-family consistency
+    \item Payload-type correctness
+    \item Constraint consistency
+    \item Version registration
+\end{enumerate}
+
+Invalid tokens must not be interpreted.
+
+\section{Extending UST}
+Extensions require:
+\begin{itemize}
+    \item unique namespaces,
+    \item defined payload schemas,
+    \item defined validation rules,
+    \item proof of determinism.
+\end{itemize}
+
+Backward-compatible additions do not require major version changes.
+
+\section{Integration with Orchestration Engines}
+UST integrates with deterministic planners and multi-agent systems.
+Tokens support:
+\begin{itemize}
+    \item execution planning,
+    \item state transitions,
+    \item constraint enforcement,
+    \item agent coordination,
+    \item safe routing.
+\end{itemize}
+
+\section{Example Token}
+\begin{verbatim}
+Token {
+    id: "sem_v1_concept_abc123",
+    family: "Semantic",
+    type: "Concept",
+    version: "1.0",
+    payload: {
+        label: "Pipeline",
+        attributes: ["Deterministic", "Auditable"]
+    },
+    constraints: {
+        readonly: true
+    },
+    metadata: {
+        timestamp: "2025-11-25T10:04Z"
+    }
+}
+\end{verbatim}
+
+\section{Future Directions}
+Potential areas include:
+\begin{itemize}
+    \item temporal semantics,
+    \item probabilistic payloads,
+    \item multi-token bindings,
+    \item domain expansions.
+\end{itemize}
+
+\section{Conclusion}
+UST v1.0 provides a universal semantic representation suitable for deterministic AI systems, forming the semantic backbone for scalable, auditable, and reproducible multi-agent workflows.
+
+\end{document}
