@@ -1,0 +1,290 @@
+% ------------------------------------------------------------------------------
+%  Apache License, Version 2.0 (embedded for source attribution only)
+%
+%  Copyright 2025 Robert Hansen
+%
+%  Licensed under the Apache License, Version 2.0 (the "License");
+%  you may not use this file except in compliance with the License.
+%  You may obtain a copy of the License at
+%
+%      http://www.apache.org/licenses/LICENSE-2.0
+%
+%  Unless required by applicable law or agreed to in writing, software
+%  distributed under the License is distributed on an "AS IS" BASIS,
+%  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%  See the License for the specific language governing permissions and
+%  limitations under the License.
+%
+%  NOTE:
+%  This block is intentionally commented and appears only in the LaTeX source.
+%  It does NOT appear in the compiled PDF output.
+% ------------------------------------------------------------------------------
+
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{times}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  urlcolor=blue
+}
+
+\title{Universal Semantic Systems:\\
+A Meaning-First Architecture for Deterministic AI Systems}
+
+\author{Robert Hansen\\
+Universal Semantic Systems\\
+}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Large language models generate fluent output but lack a semantic substrate capable of
+maintaining meaning, consistency, or alignment across extended tasks. Existing work in tool-use,
+agent frameworks, and prompting heuristics attempts to compensate by layering procedural
+logic on top of probabilistic text generation. However, these approaches do not resolve the core
+issue: LLMs operate without a stable representational layer.
+
+This paper introduces Universal Semantic Systems (USS) --- an architecture that sits above
+foundation models and provides deterministic structure for meaning formation, planning, governance,
+and execution. USS consists of: (1) UST, a universal semantic token model; (2) USR, a
+runtime coordinating reasoning, routing, and posture; (3) SCP, a semantic control protocol for
+directive routing; and (4) ORCH-C, a deterministic orchestrator for multi-step agentic behavior.
+Together, these layers convert LLMs from probabilistic text engines into auditable semantic
+systems.
+
+We outline the theoretical basis, describe the runtime architecture, compare USS to prior
+work, and present an example execution path. The result is a unified framework for meaning-first
+AI systems capable of long-horizon reliability, transparency, and alignment.
+\end{abstract}
+
+\section{Introduction}
+
+Foundation models have transformed the landscape of AI, but their core design produces inherent
+limitations for complex or long-horizon reasoning tasks. They operate as probabilistic text engines
+without an underlying semantic substrate, meaning they lack continuity of meaning, stable internal
+representation, and deterministic governance.
+
+Scaling laws work has shown that model capability increases predictably with compute, data,
+and parameter count~\cite{kaplan2020scaling}, but scaling alone does not introduce semantic structure.
+Tool-use and agent frameworks extend LLM behavior, yet they do so on top of a probabilistic
+base that was never designed to maintain explicit meaning.
+
+Universal Semantic Systems (USS) fills this gap. Rather than viewing the LLM as the
+system, USS treats the LLM as a linguistic executor inside a much larger semantic-computational
+architecture. USS introduces:
+\begin{itemize}
+  \item UST --- a universal token model defining semantic types.
+  \item USR --- a runtime that governs routing, meaning continuity, posture, and planning context.
+  \item SCP --- a control protocol for structured intent and directive flow.
+  \item ORCH-C --- a deterministic planner enforcing structure, invariants, and multi-step agentic
+        reasoning.
+\end{itemize}
+
+Together these layers enable AI systems that reason deterministically, maintain semantic invariants,
+and uphold explicit governance rules.
+
+\section{USS Overview}
+
+Figure~\ref{fig:uss-architecture} provides a high-level overview of USS components and how they
+relate to the foundation model.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{uss-architecture.png}
+  \caption{High-level USS architecture.}
+  \label{fig:uss-architecture}
+\end{figure}
+
+USS replaces prompt engineering with a structured semantic control layer. It unifies semantics,
+planning, posture, and governance into a single runtime design.
+
+\section{UST: Universal Semantic Token Model}
+
+UST defines the typed semantic substrate used across USS. Tokens represent intentions, constraints,
+postures, actions, entity types, and governance requirements. Unlike lexical tokens, UST tokens
+are meaning-first.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.7\linewidth]{ust-token-model.png}
+  \caption{UST semantic token model.}
+  \label{fig:ust-token-model}
+\end{figure}
+
+UST tokens serve as the primary interface for all downstream modules including the runtime
+(USR), the control protocol (SCP), and the planner (ORCH-C).
+
+\section{USR: Universal Semantic Runtime}
+
+USR provides the execution environment for meaning-driven computation. It performs posture
+selection, intent routing, invariant enforcement, and planning context formation.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{usr-runtime.png}
+  \caption{USR layer: the universal semantic runtime.}
+  \label{fig:usr-runtime}
+\end{figure}
+
+USR is responsible for maintaining semantic continuity across steps, guaranteeing that meaning
+does not drift as execution proceeds.
+
+\section{SCP: Semantic Control Protocol}
+
+SCP governs the flow of directives, transforming semantic tokens into structured operations routed
+through the runtime.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\linewidth]{scp-directive.png}
+  \caption{SCP directive routing model.}
+  \label{fig:scp-directive}
+\end{figure}
+
+SCP ensures that all requests are typed, validated, and semantically grounded before reaching
+ORCH-C or the model executor.
+
+\section{ORCH-C: Deterministic Planner}
+
+ORCH-C converts semantic inputs into multi-step plans. It enforces structure, invariants, posture,
+reasoning rules, and governance.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{orchc-planner.png}
+  \caption{ORCH-C deterministic orchestration planner.}
+  \label{fig:orchc-planner}
+\end{figure}
+
+ORCH-C provides determinism, traceability, and auditability for multi-step reasoning and agentic
+workflows.
+
+\section{USS vs. Conventional LLM Systems}
+
+Figure~\ref{fig:uss-vs-llm} contrasts USS with conventional LLM pipelines.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{uss-vs-llm.png}
+  \caption{USS compared to conventional LLM systems.}
+  \label{fig:uss-vs-llm}
+\end{figure}
+
+Where LLMs operate probabilistically, USS enforces meaning as the primary computational
+object.
+
+\section{Related Work}
+
+A large body of work explores how to extend or constrain LLMs using external structure. Scaling
+laws~\cite{kaplan2020scaling} characterize how performance improves with model and dataset size
+but do not address semantic representation.
+
+Tool-use approaches such as Toolformer~\cite{schick2023toolformer} teach models to call external
+tools, while frameworks like ReAct~\cite{yao2022react} combine reasoning and acting in an
+interleaved loop. Constitutional AI~\cite{bai2022constitutional} encodes alignment constraints
+as a higher-level rule set; SWE-Agent~\cite{feng2023sweagent} demonstrates agentic code editing
+grounded in a software environment. LangChain~\cite{chase2023langchain} systematizes many of
+these patterns into a developer framework.
+
+In parallel, classical automated planning~\cite{ghallab2016automated} provides mature tools for
+explicit state-space search and plan synthesis, but these systems typically lack the open-ended
+generative capability of modern LLMs.
+
+USS differs from these lines of work in two ways:
+\begin{itemize}
+  \item It introduces a universal semantic token substrate (UST) that all modules share, rather than
+        treating prompts or tool calls as opaque strings.
+  \item It defines a deterministic runtime (USR), control protocol (SCP), and planner (ORCH-C)
+        that together govern LLM behavior as one component inside a larger semantic system,
+        rather than as the primary locus of intelligence.
+\end{itemize}
+
+USS can integrate with existing agent frameworks and planning systems, but its primary contribution
+is to treat meaning, not text, as the central computational object.
+
+\section{Example Execution Flow}
+
+To illustrate USS behavior, consider a user request:
+
+\begin{quote}
+``Draft a cross-department strategy memo describing our transition to a semantic runtime.''
+\end{quote}
+
+Under USS, execution proceeds:
+\begin{enumerate}
+  \item Caller/HIL Layer: Extracts domain, document type, audience, constraints.
+  \item UST Layer: Converts intent into typed semantic tokens.
+  \item SCP: Routes tokens through posture and directive logic.
+  \item ORCH-C: Produces a deterministic, multi-step execution plan.
+  \item Governance Layers: CAP and EIL enforce autonomy, ethics, and alignment.
+  \item Output Layer: Structured, validated semantic document.
+\end{enumerate}
+
+This demonstrates how USS transforms a single query into a governed, auditable reasoning
+pipeline.
+
+\section{Conclusion}
+
+Universal Semantic Systems provides a meaning-first computational architecture for building
+deterministic, aligned, and semantically coherent AI systems. By introducing a semantic token
+substrate, a runtime with posture and invariant control, a structured protocol for directive routing,
+and a deterministic planner, USS transforms foundation models into semantically governed
+reasoning engines.
+
+Future work includes empirical benchmarking, evaluation of semantic stability, and advanced
+meaning-formation modeling. USS is intended as a foundation for research on long-horizon reasoning
+and as an infrastructure layer for future alignment and governance systems.
+
+\begin{thebibliography}{9}
+
+\bibitem{bai2022constitutional}
+Yuntao Bai et~al.
+\newblock Constitutional AI: Harmlessness from AI feedback.
+\newblock \emph{arXiv preprint arXiv:2212.08073}, 2022.
+
+\bibitem{chase2023langchain}
+Harrison Chase.
+\newblock The LangChain framework for building contextual AI agents.
+\newblock \emph{Technical Report}, 2023.
+
+\bibitem{feng2023sweagent}
+Steven Feng et~al.
+\newblock SWE-Agent: Agent-computer interfaces for software engineering.
+\newblock \emph{arXiv preprint arXiv:2310.06770}, 2023.
+
+\bibitem{ghallab2016automated}
+Malik Ghallab, Dana Nau, and Paolo Traverso.
+\newblock \emph{Automated Planning and Acting}.
+\newblock Cambridge University Press, 2016.
+
+\bibitem{kaplan2020scaling}
+Jared Kaplan et~al.
+\newblock Scaling laws for neural language models.
+\newblock \emph{arXiv preprint arXiv:2001.08361}, 2020.
+
+\bibitem{schick2023toolformer}
+Timo Schick et~al.
+\newblock Toolformer: Language models can teach themselves to use tools.
+\newblock \emph{arXiv preprint arXiv:2302.04761}, 2023.
+
+\bibitem{yao2022react}
+Shunyu Yao et~al.
+\newblock ReAct: Synergizing reasoning and acting in language models.
+\newblock \emph{arXiv preprint arXiv:2210.03629}, 2022.
+
+\end{thebibliography}
+
+\end{document}
+
